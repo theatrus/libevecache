@@ -120,6 +120,11 @@ namespace EveCache {
         return true;
     }
 
+    int CacheFile_Iterator::position() const
+    {
+        return pos;
+    }
+
     int CacheFile_Iterator::peekInt() const
     {
         int i = cacheFile->byteAt(pos) | 

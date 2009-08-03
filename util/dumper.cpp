@@ -1,6 +1,8 @@
 
 
 #include "evecache/reader.hpp"
+#include "evecache/parser.hpp"
+#include "evecache/exceptions.hpp"
 
 #include <iostream>
 
@@ -19,10 +21,12 @@ int main(int argc, char** argv)
         cF.readFile();
         std::cout << "File length is " << cF.getLength() << " bytes " << std::endl;
         CacheFile_Iterator i = cF.begin();
-        for (; i != cF.end(); i+= 1)
-        {
-            std::cout << i.peekInt();
+        Parser parser;
+        try {
+            parser.parse(i);
+        } catch (ParseException e) {
+            std::cout << "Parse exception " << static_cast<std::string>(e) << std::endl;
         }
+
     }
-    
 }

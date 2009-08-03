@@ -26,52 +26,69 @@ namespace EveCache {
         type = EStreamStart;
     }
 
-    void SStreamNode::addMember(SNode &node)
+    SStreamNode::SStreamNode(const SStreamNode& rhs)
     {
-        members.push_back(node);
+        _members = rhs._members;
+    }
+
+    void SStreamNode::addMember(SNode node)
+    {
+        _members.push_back(node);
     }
 
 /***********************************************************************/
 
-    STupleNode::STupleNode(unsigned int len) : SNode(), givenLength(len)
+    STupleNode::STupleNode(unsigned int len) : SNode(), _givenLength(len)
     {
         type = ETuple;
     }
 
     void STupleNode::addMember(SNode& node)
     {
-        assert(members.size() < givenLength);
-        members.push_back(node);
+        assert(_members.size() < _givenLength);
+        _members.push_back(node);
     }
 
-    unsigned int STupleNode::getGivenLength()
+    unsigned int STupleNode::givenLength()
     {
-        return givenLength;
+        return _givenLength;
     }
 
 /***********************************************************************/
 
 
-    SMarker::SMarker(char i) : id(i)
+    SMarker::SMarker(char i) : _id(i)
     {
         type = EMarker;
     }
 
-    char SMarker::getId() const
+    char SMarker::id() const
     {
-        return id;
+        return _id;
     }
 
 /***********************************************************************/
 
-    SIdent::SIdent(const std::string& n) : SNode(), name(n)
+    SIdent::SIdent(const std::string& n) : SNode(), _name(n)
     {
         type = EIdent;
     }
 
-    std::string SIdent::getName() const
+    std::string SIdent::name() const
     {
-        return name;
+        return _name;
+    }
+
+/***********************************************************************/
+
+    SInt::SInt(int val) : _value(val)
+    {
+        type = EInteger;
+    }
+
+    int SInt::value() const
+    {
+        return _value;
     }
 
 
@@ -84,21 +101,37 @@ namespace EveCache {
     void Parser::parse(CacheFile_Iterator& iter)
     {
         // Find one stream
+        // TODO: Nested streams...
         char check = iter.readChar();
-        SStreamNode stream();
+        SStreamNode stream;
         if (check != EStreamStart)
             throw ParseException("No stream start detected...");
 
         while (!iter.atEnd())
         {
-
+            check = iter.readChar();
+            switch(check) {
+            case EInteger: 
+            {
+                int val = iter.readInt();
+                stream.addMember(static_cast<SNode>(SInt(val)));
+            }
+                break;
+            default:
+                std::stringstream msg;
+                msg << "Can't identify type " << static_cast<int>(check)
+                    << " at position " << iter.position();
+                throw ParseException(msg.str());
+            }
         }
+
+        _streams.push_back(stream);
 
     }
 
-    std::vector<SStreamNode> Parser::getStreams() const
+    std::vector<SStreamNode> Parser::streams() const
     {
-        return streams;
+        return _streams;
     }
 
 

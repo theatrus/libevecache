@@ -38,11 +38,12 @@ namespace EveCache {
     class SStreamNode : public SNode {
     public:
         SStreamNode();
+        SStreamNode(const SStreamNode &rhs);
         virtual ~SStreamNode() { }
-        void addMember(SNode &node);
+        void addMember(SNode node);
 
     protected:
-        std::vector<SNode> members;
+        std::vector<SNode> _members;
     };
 
 /***********************************************************************/
@@ -51,10 +52,10 @@ namespace EveCache {
     public:
         STupleNode(unsigned int len);
         void addMember(SNode& node);
-        unsigned int getGivenLength();
+        unsigned int givenLength();
     protected:
-        std::vector<SNode> members;
-        unsigned int givenLength;
+        std::vector<SNode> _members;
+        unsigned int _givenLength;
     };
 
 /***********************************************************************/
@@ -62,9 +63,9 @@ namespace EveCache {
     class SMarker : public SNode {
     public:
         SMarker(char id);
-        char getId() const;
+        char id() const;
     protected:
-        char id;
+        char _id;
     };
     
 /***********************************************************************/
@@ -72,12 +73,20 @@ namespace EveCache {
     class SIdent : public SNode {
     public:
         SIdent(const std::string& m);
-        std::string getName() const;
+        std::string name() const;
     protected:
-        std::string name;
+        std::string _name;
     };
 
+/***********************************************************************/
 
+    class SInt : public SNode {
+    public:
+        SInt(int val);
+        int value() const;
+    private:
+        int _value;
+    };
 
 
 /***********************************************************************/
@@ -85,9 +94,9 @@ namespace EveCache {
     public:
         Parser();
         void parse(CacheFile_Iterator& iter);
-        std::vector<SStreamNode> getStreams() const;
+        std::vector<SStreamNode> streams() const;
     private:
-        std::vector<SStreamNode> streams;
+        std::vector<SStreamNode> _streams;
     };
 
 

@@ -39,7 +39,7 @@ namespace EveCache {
         bool operator!=(const CacheFile_Iterator& rhs) const;
 
         bool atEnd() const;
-
+        int position() const;
         //CacheFile_Iterator operator+(CacheFile_Iterator& lhs, const int len) const;
         CacheFile_Iterator& operator+=(int len);
 
@@ -61,7 +61,7 @@ namespace EveCache {
 
 
         bool advance(int len);
-
+        
 
 
     private:
