@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+
+
 namespace EveCache {
 
     typedef enum {
@@ -17,6 +19,9 @@ namespace EveCache {
         EObject = 0x17, // Object type ?
         ENone = 0x01, // Python None type
     } EStreamCode;
+
+
+    class CacheFile_Iterator;
 
 /***********************************************************************/
 
@@ -71,6 +76,21 @@ namespace EveCache {
     protected:
         std::string name;
     };
+
+
+
+
+/***********************************************************************/
+    class Parser {
+    public:
+        Parser();
+        void parse(CacheFile_Iterator& iter);
+        std::vector<SStreamNode> getStreams() const;
+    private:
+        std::vector<SStreamNode> streams;
+    };
+
+
 
 
 };

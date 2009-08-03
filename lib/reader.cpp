@@ -113,6 +113,13 @@ namespace EveCache {
         return !((*this) == rhs);
     }
 
+    bool CacheFile_Iterator::atEnd() const
+    {
+        if (pos <= limit)
+            return false;
+        return true;
+    }
+
     int CacheFile_Iterator::peekInt() const
     {
         int i = cacheFile->byteAt(pos) | 
@@ -168,9 +175,7 @@ namespace EveCache {
     bool CacheFile_Iterator::advance(int len)
     {
         pos += len;
-        if (len <= limit)
-            return true;
-        return false;
+        return atEnd();
     }
 
     int CacheFile_Iterator::readShort()

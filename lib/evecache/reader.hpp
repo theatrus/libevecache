@@ -38,12 +38,19 @@ namespace EveCache {
         bool operator==(const CacheFile_Iterator& rhs) const;
         bool operator!=(const CacheFile_Iterator& rhs) const;
 
+        bool atEnd() const;
+
+        //CacheFile_Iterator operator+(CacheFile_Iterator& lhs, const int len) const;
+        CacheFile_Iterator& operator+=(int len);
+
+
         int peekShort() const;
         int peekInt() const;
         char peekChar() const;
         float peekFloat() const;
         double peekDouble() const;
         std::string peekString(int len) const;
+
 
         int readShort();
         int readInt();
@@ -55,8 +62,7 @@ namespace EveCache {
 
         bool advance(int len);
 
-        //CacheFile_Iterator operator+(CacheFile_Iterator& lhs, const int len) const;
-        CacheFile_Iterator& operator+=(int len);
+
 
     private:
         CacheFile const *cacheFile;

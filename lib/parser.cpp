@@ -1,4 +1,7 @@
 #include "evecache/parser.hpp"
+#include "evecache/reader.hpp"
+#include "evecache/exceptions.hpp"
+
 #include <assert.h>
 
 #include <iostream>
@@ -61,9 +64,9 @@ namespace EveCache {
 
 /***********************************************************************/
 
-    SIdent::SIdent(const std::string& n) : name(n)
+    SIdent::SIdent(const std::string& n) : SNode(), name(n)
     {
-        type = SIdent;
+        type = EIdent;
     }
 
     std::string SIdent::getName() const
@@ -72,6 +75,31 @@ namespace EveCache {
     }
 
 
+/***********************************************************************/
+    Parser::Parser()
+    {
+
+    }
+
+    void Parser::parse(CacheFile_Iterator& iter)
+    {
+        // Find one stream
+        char check = iter.readChar();
+        SStreamNode stream();
+        if (check != EStreamStart)
+            throw ParseException("No stream start detected...");
+
+        while (!iter.atEnd())
+        {
+
+        }
+
+    }
+
+    std::vector<SStreamNode> Parser::getStreams() const
+    {
+        return streams;
+    }
 
 
 };
