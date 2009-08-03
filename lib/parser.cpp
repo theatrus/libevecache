@@ -36,22 +36,22 @@ namespace EveCache {
         _members.push_back(node);
     }
 
+    std::vector<SNode> SStreamNode::members() const
+    {
+        return _members;
+    }
+
 /***********************************************************************/
 
-    STupleNode::STupleNode(unsigned int len) : SNode(), _givenLength(len)
+    STuple::STuple(unsigned int len) : SStreamNode(), _givenLength(len)
     {
         type = ETuple;
     }
 
-    void STupleNode::addMember(SNode& node)
+    void STuple::addMember(SNode node)
     {
         assert(_members.size() < _givenLength);
         _members.push_back(node);
-    }
-
-    unsigned int STupleNode::givenLength()
-    {
-        return _givenLength;
     }
 
 /***********************************************************************/
@@ -117,10 +117,19 @@ namespace EveCache {
                 stream.addMember(static_cast<SNode>(SInt(val)));
             }
                 break;
+            case EIdent:
+            {
+                int len = iter.readChar();
+                std::string data = iter.readString(len);
+                stream.addMember(static_cast<SNode>(SIdent(data)));
+            }
+            break;
+
             default:
                 std::stringstream msg;
                 msg << "Can't identify type " << static_cast<int>(check)
                     << " at position " << iter.position();
+                _streams.push_back(stream);
                 throw ParseException(msg.str());
             }
         }

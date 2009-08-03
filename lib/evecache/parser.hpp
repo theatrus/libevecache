@@ -40,21 +40,20 @@ namespace EveCache {
         SStreamNode();
         SStreamNode(const SStreamNode &rhs);
         virtual ~SStreamNode() { }
-        void addMember(SNode node);
-
+        virtual void addMember(SNode node);
+        virtual std::vector<SNode> members() const;
     protected:
         std::vector<SNode> _members;
     };
 
 /***********************************************************************/
 
-    class STupleNode : public SNode {
+    class STuple : public SStreamNode {
     public:
-        STupleNode(unsigned int len);
-        void addMember(SNode& node);
+        STuple(unsigned int len);
         unsigned int givenLength();
+        virtual void addMember(SNode node);
     protected:
-        std::vector<SNode> _members;
         unsigned int _givenLength;
     };
 

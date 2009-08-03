@@ -27,6 +27,14 @@ int main(int argc, char** argv)
         } catch (ParseException e) {
             std::cout << "Parse exception " << static_cast<std::string>(e) << std::endl;
         }
+        std::cout << "Beginning dump..." << std::endl;
 
+        // TODO; more than one stream
+        const std::vector<SNode> streams = parser.streams()[0].members();
+        std::vector<SNode>::const_iterator vi = streams.begin();
+        for (; vi != streams.end(); ++vi)
+        {
+            std::cout << (vi->repl()) << std::endl;
+        }
     }
 }
