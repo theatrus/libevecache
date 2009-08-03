@@ -2,6 +2,7 @@
 #define _EC_PARSER_H_
 
 #include <vector>
+#include <string>
 
 namespace EveCache {
 
@@ -17,18 +18,58 @@ namespace EveCache {
         ENone = 0x01, // Python None type
     } EStreamCode;
 
+/***********************************************************************/
+
     class SNode {
     public:
-        virtual ~SNode() = 0;
+        virtual ~SNode() {};
+        virtual std::string repl() const;
     protected:
         EStreamCode type;
     };
 
+/***********************************************************************/
+
     class SStreamNode : public SNode {
     public:
         SStreamNode();
+        virtual ~SStreamNode() { }
+        void addMember(SNode &node);
+
     protected:
         std::vector<SNode> members;
+    };
+
+/***********************************************************************/
+
+    class STupleNode : public SNode {
+    public:
+        STupleNode(unsigned int len);
+        void addMember(SNode& node);
+        unsigned int getGivenLength();
+    protected:
+        std::vector<SNode> members;
+        unsigned int givenLength;
+    };
+
+/***********************************************************************/
+
+    class SMarker : public SNode {
+    public:
+        SMarker(char id);
+        char getId() const;
+    protected:
+        char id;
+    };
+    
+/***********************************************************************/
+    
+    class SIdent : public SNode {
+    public:
+        SIdent(const std::string& m);
+        std::string getName() const;
+    protected:
+        std::string name;
     };
 
 
