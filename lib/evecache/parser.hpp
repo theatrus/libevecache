@@ -46,10 +46,13 @@ namespace EveCache {
 
     class EVECACHE_API SNode {
     public:
+        SNode(EStreamCode t);
         virtual ~SNode() {};
         virtual std::string repl() const;
-    protected:
-        EStreamCode type;
+        EStreamCode type() const;
+        void setType(EStreamCode t);
+    private:
+        EStreamCode _type;
     };
 
 /***********************************************************************/
@@ -57,6 +60,7 @@ namespace EveCache {
     class EVECACHE_API SStreamNode : public SNode {
     public:
         SStreamNode();
+        SStreamNode(EStreamCode t);
         SStreamNode(const SStreamNode &rhs);
         virtual ~SStreamNode() { }
         virtual void addMember(SNode node);
@@ -70,6 +74,17 @@ namespace EveCache {
     class EVECACHE_API STuple : public SStreamNode {
     public:
         STuple(unsigned int len);
+        unsigned int givenLength();
+        virtual void addMember(SNode node);
+    protected:
+        unsigned int _givenLength;
+    };
+
+/***********************************************************************/
+
+    class EVECACHE_API SDict : public SStreamNode {
+    public:
+        SDict(unsigned int len);
         unsigned int givenLength();
         virtual void addMember(SNode node);
     protected:
@@ -114,7 +129,7 @@ namespace EveCache {
         void parse(CacheFile_Iterator& iter);
         std::vector<SStreamNode> streams() const;
     protected:
-        void parse(SStreamNode& node, CacheFile_Iterator& iter);
+        void parse(SStreamNode& node, CacheFile_Iterator& iter, int limit);
     private:
         std::vector<SStreamNode> _streams;
     };

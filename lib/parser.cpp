@@ -33,20 +33,37 @@ namespace EveCache {
     std::string SNode::repl() const
     {
         std::stringstream msg(std::stringstream::out);
-        msg << "<SNode type " << type << ">";
+        msg << "<SNode type " << type() << ">";
         return msg.str();
+    }
+
+    SNode::SNode(EStreamCode t) : _type(t)
+    {
+    }
+
+    EStreamCode SNode::type() const
+    {
+        return _type;
+    }
+
+    void SNode::setType(EStreamCode t)
+    {
+        _type = t;
     }
 
 /***********************************************************************/
 
 
 
-    SStreamNode::SStreamNode() : SNode()
+    SStreamNode::SStreamNode() : SNode(EStreamStart)
     {
-        type = EStreamStart;
     }
 
-    SStreamNode::SStreamNode(const SStreamNode& rhs)
+    SStreamNode::SStreamNode(EStreamCode t) : SNode(t)
+    {
+    }
+
+    SStreamNode::SStreamNode(const SStreamNode& rhs) : SNode(rhs)
     {
         _members = rhs._members;
     }
@@ -63,9 +80,8 @@ namespace EveCache {
 
 /***********************************************************************/
 
-    STuple::STuple(unsigned int len) : SStreamNode(), _givenLength(len)
+    STuple::STuple(unsigned int len) : SStreamNode(ETuple), _givenLength(len)
     {
-        type = ETuple;
     }
 
     void STuple::addMember(SNode node)
@@ -76,10 +92,22 @@ namespace EveCache {
 
 /***********************************************************************/
 
-
-    SMarker::SMarker(char i) : _id(i)
+    SDict::SDict(unsigned int len) : SStreamNode(EDict), _givenLength(len)
     {
-        type = EMarker;
+    }
+
+    void SDict::addMember(SNode node)
+    {
+        assert(_members.size() < _givenLength);
+        _members.push_back(node);
+    }
+
+
+/***********************************************************************/
+
+
+    SMarker::SMarker(char i) : SNode(EMarker), _id(i)
+    {
     }
 
     char SMarker::id() const
@@ -89,9 +117,8 @@ namespace EveCache {
 
 /***********************************************************************/
 
-    SIdent::SIdent(const std::string& n) : SNode(), _name(n)
+    SIdent::SIdent(const std::string& n) : SNode(EIdent), _name(n)
     {
-        type = EIdent;
     }
 
     std::string SIdent::name() const
@@ -101,9 +128,8 @@ namespace EveCache {
 
 /***********************************************************************/
 
-    SInt::SInt(int val) : _value(val)
+    SInt::SInt(int val) : SNode(EInteger), _value(val)
     {
-        type = EInteger;
     }
 
     int SInt::value() const
@@ -118,11 +144,13 @@ namespace EveCache {
 
     }
 
-    void Parser::parse(SStreamNode& stream, CacheFile_Iterator &iter)
+    void Parser::parse(SStreamNode& stream, CacheFile_Iterator &iter, int limit)
     {
         char check;
-        while (!iter.atEnd())
+        std::cout << "  New stream with inner type " << std::hex << stream.type() << std::endl;
+        while (!iter.atEnd() || limit != 0)
         {
+            std::cout << "Stream len: " << stream.members().size() << std::endl;
             check = iter.readChar();
             switch(check) {
             case EInteger: 
@@ -138,13 +166,35 @@ namespace EveCache {
                 stream.addMember(static_cast<SNode>(SIdent(data)));
             }
             break;
-
+            case EDict:
+            {
+                int len = iter.readChar();
+                SDict dict = SDict(len * 2); // key & val
+                parse(dict, iter, len * 2);
+                stream.addMember(static_cast<SNode>(dict));
+            }
+            break;
+            case ETuple:
+            {
+                int len = iter.readChar();
+                STuple tuple = STuple(len);
+                parse(tuple, iter, len);
+                stream.addMember(static_cast<SNode>(tuple));
+            }
+            break;
+            case EMarker:
+            {
+                char t = iter.readChar();
+                stream.addMember(static_cast<SNode>(SMarker(t)));
+            }
+            break;
             default:
                 std::stringstream msg;
-                msg << "Can't identify type " << static_cast<int>(check)
+                msg << "Can't identify type " << std::hex << static_cast<int>(check) << std::dec
                     << " at position " << iter.position();
                 throw ParseException(msg.str());
             }
+            limit -= 1;
         }
 
 
@@ -160,7 +210,7 @@ namespace EveCache {
             if (check != EStreamStart)
                 throw ParseException("No stream start detected...");
             try {
-                parse(stream, iter);
+                parse(stream, iter, -1); // -1 = not sure how long this will be, just keep on going...
             } catch (ParseException e) {
                 // Trampoline the exception
                 _streams.push_back(stream);
