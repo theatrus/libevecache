@@ -21,13 +21,13 @@
 #define _EC_READER_H_
 
 #include <string>
-
+#include "evecache/config.hpp"
 
 namespace EveCache {
 
     class CacheFile_Iterator;
 
-    class CacheFile {
+    class EVECACHE_API CacheFile {
     public:
         CacheFile(const std::string &filename);
         CacheFile(const CacheFile&);
@@ -47,7 +47,7 @@ namespace EveCache {
         std::string filename;
     };
 
-    class CacheFile_Iterator { // This does not adhere to the iterator protocol, yet
+    class EVECACHE_API CacheFile_Iterator { // This does not adhere to the iterator protocol, yet
     public:
         CacheFile_Iterator(CacheFile const*, int position, int valid_length);
         CacheFile_Iterator(const CacheFile_Iterator&);

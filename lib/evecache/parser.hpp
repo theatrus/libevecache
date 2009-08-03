@@ -23,7 +23,7 @@
 #include <vector>
 #include <string>
 
-
+#include "evecache/config.hpp"
 
 namespace EveCache {
 
@@ -44,7 +44,7 @@ namespace EveCache {
 
 /***********************************************************************/
 
-    class SNode {
+    class EVECACHE_API SNode {
     public:
         virtual ~SNode() {};
         virtual std::string repl() const;
@@ -54,7 +54,7 @@ namespace EveCache {
 
 /***********************************************************************/
 
-    class SStreamNode : public SNode {
+    class EVECACHE_API SStreamNode : public SNode {
     public:
         SStreamNode();
         SStreamNode(const SStreamNode &rhs);
@@ -67,7 +67,7 @@ namespace EveCache {
 
 /***********************************************************************/
 
-    class STuple : public SStreamNode {
+    class EVECACHE_API STuple : public SStreamNode {
     public:
         STuple(unsigned int len);
         unsigned int givenLength();
@@ -78,7 +78,7 @@ namespace EveCache {
 
 /***********************************************************************/
 
-    class SMarker : public SNode {
+    class EVECACHE_API SMarker : public SNode {
     public:
         SMarker(char id);
         char id() const;
@@ -88,7 +88,7 @@ namespace EveCache {
     
 /***********************************************************************/
     
-    class SIdent : public SNode {
+    class EVECACHE_API SIdent : public SNode {
     public:
         SIdent(const std::string& m);
         std::string name() const;
@@ -98,7 +98,7 @@ namespace EveCache {
 
 /***********************************************************************/
 
-    class SInt : public SNode {
+    class EVECACHE_API SInt : public SNode {
     public:
         SInt(int val);
         int value() const;
@@ -108,7 +108,7 @@ namespace EveCache {
 
 
 /***********************************************************************/
-    class Parser {
+    class EVECACHE_API Parser {
     public:
         Parser();
         void parse(CacheFile_Iterator& iter);
