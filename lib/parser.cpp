@@ -1,3 +1,23 @@
+// libevecache - EVE Cache File Reader Library
+// Copyright (C) 2009  StackFoundry LLC and Yann Ramin
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// http://www.stackfoundry.com/libevecache
+// http://gitorious.org/libevecache
+
+
 #include "evecache/parser.hpp"
 #include "evecache/reader.hpp"
 #include "evecache/exceptions.hpp"
@@ -98,15 +118,9 @@ namespace EveCache {
 
     }
 
-    void Parser::parse(CacheFile_Iterator& iter)
+    void Parser::parse(SStreamNode& stream, CacheFile_Iterator &iter)
     {
-        // Find one stream
-        // TODO: Nested streams...
-        char check = iter.readChar();
-        SStreamNode stream;
-        if (check != EStreamStart)
-            throw ParseException("No stream start detected...");
-
+        char check;
         while (!iter.atEnd())
         {
             check = iter.readChar();
@@ -116,7 +130,7 @@ namespace EveCache {
                 int val = iter.readInt();
                 stream.addMember(static_cast<SNode>(SInt(val)));
             }
-                break;
+            break;
             case EIdent:
             {
                 int len = iter.readChar();
@@ -129,12 +143,32 @@ namespace EveCache {
                 std::stringstream msg;
                 msg << "Can't identify type " << static_cast<int>(check)
                     << " at position " << iter.position();
-                _streams.push_back(stream);
                 throw ParseException(msg.str());
             }
         }
 
-        _streams.push_back(stream);
+
+
+    }
+
+    void Parser::parse(CacheFile_Iterator& iter)
+    {
+
+        while(!iter.atEnd()) {
+            char check = iter.readChar();
+            SStreamNode stream;
+            if (check != EStreamStart)
+                throw ParseException("No stream start detected...");
+            try {
+                parse(stream, iter);
+            } catch (ParseException e) {
+                // Trampoline the exception
+                _streams.push_back(stream);
+                throw e;
+            }
+
+            _streams.push_back(stream);
+        }
 
     }
 
