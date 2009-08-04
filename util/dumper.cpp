@@ -27,21 +27,34 @@
 // Yes I'm lazy
 using namespace EveCache;
 
-void dump(const std::vector<SNode*>& stream)
+void nspaces(int n)
+{
+    n *= 2;
+    for (int i = 0; i < n; i++) {
+        std::cout << " "; // horrendously inefficient 4tw
+    }
+}
+
+void dump(const std::vector<SNode*>& stream, int level)
 {
     std::vector<SNode*>::const_iterator vi = stream.begin();
-    
-    std::cout << " {Length: " << stream.size() << "} ";
-    
+
+    //std::cout << " {Length: " << stream.size() << "} ";
+
     for (; vi != stream.end(); ++vi)
     {
-        std::cout << " " << ((*vi)->repl()) << " ";
+        nspaces(level);
+        std::cout << "" << ((*vi)->repl()) << " " << std::endl;
         if ((*vi)->members().size() > 0) { // generic catch all members with nested members
             const SNode* sn = *vi;
             const std::vector<SNode*>& ste = sn->members();
-            std::cout << std::endl << "      ( ";
-            dump(ste);
-            std::cout << " ) " << std::endl;
+            nspaces(level);
+            std::cout << " (" << std::endl;
+
+            dump(ste, level + 1);
+
+            nspaces(level);
+            std::cout << " )" << std::endl;
         }
     }
 
@@ -72,7 +85,7 @@ int main(int argc, char** argv)
         // TODO; more than one stream
         const std::vector<SNode*>& streams = parser.streams()[0]->members();
         std::cout << "Beginning dump..." << std::endl;
-        dump(streams);
+        dump(streams, 0);
     }
     std::cout << std::endl;
 }

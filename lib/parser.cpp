@@ -23,7 +23,6 @@
 #include "evecache/exceptions.hpp"
 
 #include <assert.h>
-#include <zlib.h>
 
 #include <iostream>
 #include <sstream>
@@ -361,6 +360,21 @@ namespace EveCache {
         return ss.str();
     }
 
+/***********************************************************************/
+
+    SDBRow::SDBRow(int magic, const std::vector<unsigned char>& data) 
+        : SNode(ECompressedRow), _id(magic), _data(data)
+    {
+    }
+
+    std::string SDBRow::repl() const
+    {
+        std::stringstream ss;
+        ss << " <DBRow> ";
+        return ss.str();
+    }
+
+
 
 /***********************************************************************/
     Parser::Parser()
@@ -512,26 +526,39 @@ namespace EveCache {
             case ECompressedRow:
             {
                 iter.readChar(); // Datatype 0x1b - special magic id?
-                iter.readChar();  // Data for 0x1b
-                uLongf len = iter.readChar() & 0xFF;
+                int magic = iter.readChar();  // Data for 0x1b
+                int len = iter.readChar() & 0xFF;
                 std::string compdata = iter.readString(len);
 
-                const unsigned char* olddata = reinterpret_cast<const unsigned char*>(compdata.c_str());
+                const unsigned char* olddata = reinterpret_cast<const unsigned char*>
+                    (compdata.c_str());
+
                 std::vector<unsigned char> newdata;
                 rle_unpack(olddata, len, newdata);
 
-                std::vector<unsigned char>::iterator kk = newdata.begin();
-                
-                for (; kk != newdata.end(); ++kk)
-                {
-                    std::cout << " " << std::hex << static_cast<int>(*kk);
+                // std::vector<unsigned char>::iterator kk = newdata.begin();
+
+                // for (; kk != newdata.end(); ++kk)
+                // {
+                //     std::cout << " " << std::hex << static_cast<int>(*kk);
+                // }
+                // std::cout << std::endl;
+
+                // std::cout << "Got new data! oldlen " << std::dec 
+                //           << len << " len " <<  newdata.size() << std::endl;
+
+                stream->addMember(new SDBRow(magic, newdata));
+
+            }
+            break;
+            case 0x2d:
+            {
+                if(iter.readChar() != 0x2d) {
+                    std::stringstream msg;
+                    msg << "Didn't encounter a double 0x2d where I thought there should be one at " << iter.position();
+                    throw ParseException(msg.str());
                 }
-                std::cout << std::endl;
-
-                std::cout << "Got new data! oldlen " << std::dec 
-                          << len << " len " <<  newdata.size() << std::endl;
-
-                
+                //return;
             }
             break;
             default:
