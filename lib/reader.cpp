@@ -166,9 +166,9 @@ namespace EveCache {
         return i;
     }
 
-    char CacheFile_Iterator::peekChar() const
+    unsigned char CacheFile_Iterator::peekChar() const
     {
-        return static_cast<char>(cacheFile->byteAt(pos));
+        return static_cast<unsigned char>(cacheFile->byteAt(pos));
     }
 
     float CacheFile_Iterator::peekFloat() const
@@ -233,9 +233,9 @@ namespace EveCache {
         return r;
     }
 
-    char CacheFile_Iterator::readChar()
+    unsigned char CacheFile_Iterator::readChar()
     {
-        char r = peekChar();
+        unsigned char r = peekChar();
         advance(1);
         return r;
     }

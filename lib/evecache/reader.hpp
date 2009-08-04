@@ -66,7 +66,7 @@ namespace EveCache {
 
         int peekShort() const;
         int peekInt() const;
-        char peekChar() const;
+        unsigned char peekChar() const;
         float peekFloat() const;
         double peekDouble() const;
         std::string peekString(int len) const;
@@ -75,7 +75,7 @@ namespace EveCache {
 
         int readShort();
         int readInt();
-        char readChar();
+        unsigned char readChar();
         float readFloat();
         double readDouble();
         std::string readString(int len);

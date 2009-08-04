@@ -23,11 +23,60 @@
 #include "evecache/exceptions.hpp"
 
 #include <assert.h>
+#include <zlib.h>
 
 #include <iostream>
 #include <sstream>
 
 namespace EveCache {
+
+
+    struct packer_opcap {
+        unsigned char tlen : 3;
+        bool tzero : 1;
+        unsigned char blen : 3;
+        bool bzero : 1;
+    };
+
+    static void rle_unpack(const unsigned char* in_buf, int in_length, std::vector<unsigned char> &buffer)
+    {
+        buffer.clear();
+        if(in_length == 0)
+            return;
+
+        const unsigned char *end = in_buf + in_length;
+        while (in_buf < end)
+        {
+
+            const packer_opcap opcap = *(reinterpret_cast<const packer_opcap*>(in_buf++));
+            if (opcap.tzero) {
+                unsigned char count = opcap.tlen + 1;
+                for (; count > 0; count--)
+                {
+                    buffer.push_back(0);
+                }
+            } else {
+                unsigned int count = 8 - opcap.tlen;
+                for (; count > 0 && in_buf < end ; count--) {
+                    buffer.push_back(*in_buf++);
+                }
+            }
+            if (opcap.bzero) {
+                unsigned char count = opcap.blen + 1;
+                for (; count > 0; count--)
+                {
+                    buffer.push_back(0);
+                }
+            } else {
+                unsigned int count = 8 - opcap.blen;
+                for (; count > 0 && in_buf < end ; count--) {
+                    buffer.push_back(*in_buf++);
+                }
+            }
+
+        }
+    }
+
 
 
     std::string SNode::repl() const
@@ -347,7 +396,7 @@ namespace EveCache {
             break;
             case EInteger:
             {
-                int val = iter.readInt();
+                unsigned int val = iter.readInt();
                 stream->addMember(new SInt(val));
             }
             break;
@@ -359,7 +408,7 @@ namespace EveCache {
             break;
             case EIdent:
             {
-                int len = iter.readChar();
+                unsigned int len = iter.readChar();
                 std::string data = iter.readString(len);
                 stream->addMember(new SIdent(data));
             }
@@ -373,7 +422,7 @@ namespace EveCache {
             break;
             case EDict:
             {
-                int len = iter.readChar();
+                unsigned int len = iter.readChar();
                 SDict* dict = new SDict(len * 2); // key & val
                 stream->addMember(dict);
                 parse(dict, iter, len * 2);
@@ -382,7 +431,7 @@ namespace EveCache {
             case ETuple2:
             case ETuple:
             {
-                int len = iter.readChar();
+                unsigned int len = iter.readChar();
                 STuple* tuple = new STuple(len);
                 stream->addMember(tuple);
                 parse(tuple, iter, len);
@@ -446,7 +495,7 @@ namespace EveCache {
             break;
             case ESubstream:
             {
-                int len = iter.readChar();
+                unsigned int len = iter.readChar();
                 if ((len & 0xff) == 0xFF)
                     len = iter.readInt();
                 char sig = iter.readChar(); // 0x7e
@@ -460,9 +509,34 @@ namespace EveCache {
                 iter.seek(iter_sub.position());
             }
             break;
+            case ECompressedRow:
+            {
+                iter.readChar(); // Datatype 0x1b - special magic id?
+                iter.readChar();  // Data for 0x1b
+                uLongf len = iter.readChar() & 0xFF;
+                std::string compdata = iter.readString(len);
+
+                const unsigned char* olddata = reinterpret_cast<const unsigned char*>(compdata.c_str());
+                std::vector<unsigned char> newdata;
+                rle_unpack(olddata, len, newdata);
+
+                std::vector<unsigned char>::iterator kk = newdata.begin();
+                
+                for (; kk != newdata.end(); ++kk)
+                {
+                    std::cout << " " << std::hex << static_cast<int>(*kk);
+                }
+                std::cout << std::endl;
+
+                std::cout << "Got new data! oldlen " << std::dec 
+                          << len << " len " <<  newdata.size() << std::endl;
+
+                
+            }
+            break;
             default:
                 std::stringstream msg;
-                msg << "Can't identify type 0x" << std::hex << static_cast<unsigned int>(check) 
+                msg << "Can't identify type 0x" << std::hex << static_cast<unsigned int>(check)
                     << " at position 0x" << iter.position();
                 throw ParseException(msg.str());
             }

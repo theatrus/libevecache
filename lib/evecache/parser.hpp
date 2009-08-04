@@ -45,6 +45,7 @@ namespace EveCache {
         ESubstream = 0x2b, // substream - len bytes followed by 0x7e
         ELongLong = 0x3, // 64 bit value?
         EDBHeader = 0x22, // a database header field of some variety
+        ECompressedRow = 0x2a, // the datatype from hell, a RLEish compressed row
     } EStreamCode;
 
 
