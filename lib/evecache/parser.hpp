@@ -76,6 +76,7 @@ namespace EveCache {
         SStreamNode(EStreamCode t);
         SStreamNode(const SStreamNode &rhs);
         virtual ~SStreamNode() { }
+        virtual std::string repl() const;
 
     protected:
 
@@ -86,6 +87,7 @@ namespace EveCache {
     class EVECACHE_API SDBHeader : public SNode {
     public:
         SDBHeader();
+        virtual std::string repl() const;
     };
 
 
@@ -97,6 +99,7 @@ namespace EveCache {
         virtual ~STuple();
         virtual unsigned int givenLength() const;
         virtual void addMember(SNode* node);
+        virtual std::string repl() const;
     protected:
         unsigned int _givenLength;
     };
@@ -109,6 +112,7 @@ namespace EveCache {
         virtual ~SDict();
         virtual unsigned int givenLength() const;
         virtual void addMember(SNode* node);
+        virtual std::string repl() const;
     protected:
         unsigned int _givenLength;
     };
@@ -119,6 +123,7 @@ namespace EveCache {
     class EVECACHE_API SNone : public SNode {
     public:
         SNone();
+        virtual std::string repl() const;
     };
 
 
@@ -128,6 +133,7 @@ namespace EveCache {
     public:
         SMarker(char id);
         virtual char id() const;
+        virtual std::string repl() const;
     protected:
         char _id;
     };
@@ -138,6 +144,7 @@ namespace EveCache {
     public:
         SIdent(const std::string& m);
         virtual std::string name() const;
+        virtual std::string repl() const;
     protected:
         std::string _name;
     };
@@ -148,6 +155,7 @@ namespace EveCache {
     public:
         SString(const std::string& m);
         virtual std::string name() const;
+        virtual std::string repl() const;
     protected:
         std::string _name;
     };
@@ -158,6 +166,7 @@ namespace EveCache {
     public:
         SInt(int val);
         virtual int value() const;
+        virtual std::string repl() const;
     private:
         int _value;
     };
@@ -168,6 +177,7 @@ namespace EveCache {
     public:
         SLongLong(long long val);
         virtual long long value() const;
+        virtual std::string repl() const;
     private:
         long long _value;
     };
@@ -177,6 +187,7 @@ namespace EveCache {
     class EVECACHE_API SObject : public SNode {
     public:
         SObject();
+        virtual std::string repl() const;
     private:
     };
 
@@ -186,6 +197,7 @@ namespace EveCache {
     class EVECACHE_API SSubstream : public SNode {
     public:
         SSubstream(int len);
+        virtual std::string repl() const;
     private:
         int _len;
     };

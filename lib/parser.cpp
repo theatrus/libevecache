@@ -95,11 +95,24 @@ namespace EveCache {
     {
     }
 
+    std::string SStreamNode::repl() const
+    {
+        std::stringstream ss;
+        ss << " <SStreamNode> ";
+        return ss.str();
+    }
 
 /***********************************************************************/
 
     SDBHeader::SDBHeader() : SNode(EDBHeader)
     {
+    }
+
+    std::string SDBHeader::repl() const
+    {
+        std::stringstream ss;
+        ss << " <SDBHeader> ";
+        return ss.str();
     }
 
 
@@ -125,6 +138,13 @@ namespace EveCache {
         return _givenLength;
     }
 
+    std::string STuple::repl() const
+    {
+        std::stringstream ss;
+        ss << " <STuple> ";
+        return ss.str();
+    }
+
 
 /***********************************************************************/
 
@@ -147,11 +167,26 @@ namespace EveCache {
         return _givenLength;
     }
 
+    std::string SDict::repl() const
+    {
+        std::stringstream ss;
+        ss << " <SDict> ";
+        return ss.str();
+    }
+
+
 /***********************************************************************/
 
 
     SMarker::SMarker(char i) : SNode(EMarker), _id(i)
     {
+    }
+
+    std::string SMarker::repl() const
+    {
+        std::stringstream ss;
+        ss << " <SMarker ID: " << static_cast<int>(id()) << " > ";
+        return ss.str();
     }
 
     char SMarker::id() const
@@ -163,6 +198,13 @@ namespace EveCache {
 
     SIdent::SIdent(const std::string& n) : SNode(EIdent), _name(n)
     {
+    }
+
+    std::string SIdent::repl() const
+    {
+        std::stringstream ss;
+        ss << " <SIdent '" << name() << "'> ";
+        return ss.str();
     }
 
     std::string SIdent::name() const
@@ -182,6 +224,14 @@ namespace EveCache {
         return _name;
     }
 
+    std::string SString::repl() const
+    {
+        std::stringstream ss;
+        ss << " <SString '" << name() << "'> ";
+        return ss.str();
+    }
+
+
 
 /***********************************************************************/
 
@@ -192,6 +242,13 @@ namespace EveCache {
     int SInt::value() const
     {
         return _value;
+    }
+
+    std::string SInt::repl() const
+    {
+        std::stringstream ss;
+        ss << " <SInt '" << value() << "'> ";
+        return ss.str();
     }
 
 /***********************************************************************/
@@ -205,6 +262,13 @@ namespace EveCache {
         return _value;
     }
 
+    std::string SLongLong::repl() const
+    {
+        std::stringstream ss;
+        ss << " <SLongLong '" << value() << "'> ";
+        return ss.str();
+    }
+
 
 /***********************************************************************/
 
@@ -212,12 +276,27 @@ namespace EveCache {
     {
     }
 
+    std::string SObject::repl() const
+    {
+        std::stringstream ss;
+        ss << " <SObject> ";
+        return ss.str();
+    }
+
+
 
 /***********************************************************************/
 
     SNone::SNone() : SNode(ENone)
     {
     }
+    std::string SNone::repl() const
+    {
+        std::stringstream ss;
+        ss << " <NONE> ";
+        return ss.str();
+    }
+
 
 
 /***********************************************************************/
@@ -226,6 +305,12 @@ namespace EveCache {
     {
     }
 
+    std::string SSubstream::repl() const
+    {
+        std::stringstream ss;
+        ss << " <SSubstream> ";
+        return ss.str();
+    }
 
 
 /***********************************************************************/
