@@ -24,6 +24,29 @@
 
 #include <iostream>
 
+// Yes I'm lazy
+using namespace EveCache;
+
+void dump(const std::vector<SNode*>& stream)
+{
+    std::vector<SNode*>::const_iterator vi = stream.begin();
+    
+    std::cout << " {Length: " << stream.size() << "} ";
+    
+    for (; vi != stream.end(); ++vi)
+    {
+        std::cout << " " << ((*vi)->repl()) << " ";
+        if ((*vi)->type() == ETuple) {
+            const SNode* sn = *vi;
+            const std::vector<SNode*>& ste = sn->members();
+            std::cout << std::endl << "      ( ";
+            dump(ste);
+            std::cout << " ) " << std::endl;
+        }
+    }
+
+}
+
 int main(int argc, char** argv)
 {
     std::cout << "Cache File Dumper " << std::endl;
@@ -33,7 +56,6 @@ int main(int argc, char** argv)
     }
 
     {
-        using namespace EveCache;
         std::string fileName(argv[1]);
         CacheFile cF(fileName);
         cF.readFile();
@@ -48,15 +70,9 @@ int main(int argc, char** argv)
 
 
         // TODO; more than one stream
-        const std::vector<SNode> streams = parser.streams()[0].members();
-        std::vector<SNode>::const_iterator vi = streams.begin();
-
+        const std::vector<SNode*>& streams = parser.streams()[0]->members();
         std::cout << "Beginning dump..." << std::endl;
-        std::cout << "Length: " << streams.size() << std::endl;
-
-        for (; vi != streams.end(); ++vi)
-        {
-            std::cout << (vi->repl()) << std::endl;
-        }
+        dump(streams);
     }
+    std::cout << std::endl;
 }
