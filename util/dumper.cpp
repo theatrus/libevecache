@@ -36,7 +36,7 @@ void dump(const std::vector<SNode*>& stream)
     for (; vi != stream.end(); ++vi)
     {
         std::cout << " " << ((*vi)->repl()) << " ";
-        if ((*vi)->type() == ETuple) {
+        if ((*vi)->members().size() > 0) { // generic catch all members with nested members
             const SNode* sn = *vi;
             const std::vector<SNode*>& ste = sn->members();
             std::cout << std::endl << "      ( ";

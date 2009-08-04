@@ -83,8 +83,6 @@ namespace EveCache {
 
 /***********************************************************************/
 
-
-
     SStreamNode::SStreamNode() : SNode(EStreamStart)
     {
     }
@@ -94,6 +92,13 @@ namespace EveCache {
     }
 
     SStreamNode::SStreamNode(const SStreamNode& rhs) : SNode(rhs)
+    {
+    }
+
+
+/***********************************************************************/
+
+    SDBHeader::SDBHeader() : SNode(EDBHeader)
     {
     }
 
@@ -165,6 +170,19 @@ namespace EveCache {
         return _name;
     }
 
+
+/***********************************************************************/
+
+    SString::SString(const std::string& n) : SNode(EString), _name(n)
+    {
+    }
+
+    std::string SString::name() const
+    {
+        return _name;
+    }
+
+
 /***********************************************************************/
 
     SInt::SInt(int val) : SNode(EInteger), _value(val)
@@ -172,6 +190,17 @@ namespace EveCache {
     }
 
     int SInt::value() const
+    {
+        return _value;
+    }
+
+/***********************************************************************/
+
+    SLongLong::SLongLong(long long val) : SNode(ELongLong), _value(val)
+    {
+    }
+
+    long long SLongLong::value() const
     {
         return _value;
     }
@@ -189,6 +218,14 @@ namespace EveCache {
     SNone::SNone() : SNode(ENone)
     {
     }
+
+
+/***********************************************************************/
+
+    SSubstream::SSubstream(int len) : SNode(ENone), _len(len)
+    {
+    }
+
 
 
 /***********************************************************************/
@@ -210,11 +247,13 @@ namespace EveCache {
     void Parser::parse(SNode* stream, CacheFile_Iterator &iter, int limit)
     {
         char check;
-        std::cout << "  New stream with inner type " << std::hex << stream->type() << std::endl;
+        std::cout << "   --> New stream with inner type " << std::hex << stream->type() << std::endl;
         while (!iter.atEnd() && limit != 0)
         {
-            std::cout << "Stream len: " << stream->members().size() << " Limit " << limit << std::endl;
-            check = iter.readChar();
+            std::cout << "Stream len: " << stream->members().size() << " Limit " << limit
+                      << " bytelimit " << iter.limit();
+            std::cout << std::endl;
+            check = iter.readChar() & 0x3f; // magic
             switch(check) {
             case ENone:
             {
@@ -227,11 +266,24 @@ namespace EveCache {
                 stream->addMember(new SInt(val));
             }
             break;
+            case ELongLong:
+            {
+                long long val = iter.readLongLong();
+                stream->addMember(new SLongLong(val));
+            }
+            break;
             case EIdent:
             {
                 int len = iter.readChar();
                 std::string data = iter.readString(len);
                 stream->addMember(new SIdent(data));
+            }
+            break;
+            case EString:
+            {
+                int len = iter.readChar();
+                std::string data = iter.readString(len);
+                stream->addMember(new SString(data));
             }
             break;
             case EDict:
@@ -242,12 +294,29 @@ namespace EveCache {
                 parse(dict, iter, len * 2);
             }
             break;
+            case ETuple2:
             case ETuple:
             {
                 int len = iter.readChar();
                 STuple* tuple = new STuple(len);
                 stream->addMember(tuple);
                 parse(tuple, iter, len);
+
+            }
+            break;
+            case E2Tuple:
+            {
+                STuple* tuple = new STuple(2);
+                stream->addMember(tuple);
+                parse(tuple, iter, 2);
+
+            }
+            break;
+            case E1Tuple:
+            {
+                STuple* tuple = new STuple(1);
+                stream->addMember(tuple);
+                parse(tuple, iter, 1);
 
             }
             break;
@@ -263,11 +332,47 @@ namespace EveCache {
                 stream->addMember(new SInt(i));
             }
             break;
+            case EByte:
+            {
+                int i = iter.readChar();
+                stream->addMember(new SInt(i));
+            }
+            break;
             case EObject:
             {
                 SObject *obj = new SObject();
                 stream->addMember(obj);
                 parse(obj, iter, 2);
+            }
+            break;
+            case EDBHeader:
+            {
+                SNode *obj = new SDBHeader();
+                stream->addMember(obj);
+                parse(obj, iter, 1);
+                char c = iter.readChar();
+                if (c == 0x2d) {
+                    c = iter.readChar();
+                    if (c == 0x2d) {
+                        std::cout << " Valid end of dbheader? " << std::endl;
+                    }
+                }
+            }
+            break;
+            case ESubstream:
+            {
+                int len = iter.readChar();
+                if ((len & 0xff) == 0xFF)
+                    len = iter.readInt();
+                char sig = iter.readChar(); // 0x7e
+
+                assert(sig == 0x7e);
+                CacheFile_Iterator iter_sub(iter);
+                iter_sub.setLimit(len);
+                SSubstream *ss = new SSubstream(len);
+                stream->addMember(ss);
+                parse(ss, iter_sub, -1);
+                iter.seek(iter_sub.position());
             }
             break;
             default:
@@ -278,8 +383,8 @@ namespace EveCache {
             }
             limit -= 1;
         }
-
-
+        std::cout << " <-- parser exiting bytelimit : " <<
+            iter.limit() << " inner type " << std::hex << stream->type() << std::endl;
 
     }
 

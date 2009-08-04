@@ -30,13 +30,21 @@ namespace EveCache {
     typedef enum {
         EStreamStart = 0x7e,
         ETuple = 0x14, // a tuple of N objects
+        ETuple2 = 0x15, // a tuple of N objects, variant 2
+        E2Tuple = 0x2c, // a tuple of 2 objects
+        E1Tuple = 0x25, // a tuple of N objects
         EMarker = 0x11, // A one byte identifier code
         EIdent = 0x13, // an identifier string
+        EString = 0x2, // Another type of string, also ids
         EInteger = 0x04, // 4 byte, little endian?
+        EByte = 0x6, // i think
         EShort = 0x05, // 2 byte
         EDict = 0x16, // N objects, consisting of key object and value object
         EObject = 0x17, // Object type ?
         ENone = 0x01, // Python None type
+        ESubstream = 0x2b, // substream - len bytes followed by 0x7e
+        ELongLong = 0x3, // 64 bit value?
+        EDBHeader = 0x22, // a database header field of some variety
     } EStreamCode;
 
 
@@ -72,6 +80,14 @@ namespace EveCache {
     protected:
 
     };
+
+/***********************************************************************/
+
+    class EVECACHE_API SDBHeader : public SNode {
+    public:
+        SDBHeader();
+    };
+
 
 /***********************************************************************/
 
@@ -128,6 +144,16 @@ namespace EveCache {
 
 /***********************************************************************/
 
+    class EVECACHE_API SString : public SNode {
+    public:
+        SString(const std::string& m);
+        virtual std::string name() const;
+    protected:
+        std::string _name;
+    };
+
+/***********************************************************************/
+
     class EVECACHE_API SInt : public SNode {
     public:
         SInt(int val);
@@ -138,12 +164,31 @@ namespace EveCache {
 
 /***********************************************************************/
 
+    class EVECACHE_API SLongLong : public SNode {
+    public:
+        SLongLong(long long val);
+        virtual long long value() const;
+    private:
+        long long _value;
+    };
+
+/***********************************************************************/
+
     class EVECACHE_API SObject : public SNode {
     public:
         SObject();
     private:
     };
 
+
+/***********************************************************************/
+
+    class EVECACHE_API SSubstream : public SNode {
+    public:
+        SSubstream(int len);
+    private:
+        int _len;
+    };
 
 
 

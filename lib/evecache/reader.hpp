@@ -59,6 +59,7 @@ namespace EveCache {
 
         bool atEnd() const;
         int position() const;
+        int limit() const;
         //CacheFile_Iterator operator+(CacheFile_Iterator& lhs, const int len) const;
         CacheFile_Iterator& operator+=(int len);
 
@@ -71,23 +72,27 @@ namespace EveCache {
         std::string peekString(int len) const;
 
 
+
         int readShort();
         int readInt();
         char readChar();
         float readFloat();
         double readDouble();
         std::string readString(int len);
+        long long readLongLong();
 
-
+        void seek(int pos);
         bool advance(int len);
-        
+        void setLimit(int limit);
+
+
 
 
     private:
         CacheFile const *cacheFile;
         int lastPeek;
         int pos;
-        int limit;
+        int _limit;
         
     };
 };

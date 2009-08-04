@@ -100,12 +100,12 @@ namespace EveCache {
  */
 
     CacheFile_Iterator::CacheFile_Iterator(CacheFile const* cf, int position, int valid_length) :
-        cacheFile(cf), lastPeek(0), pos(position), limit(valid_length)
+        cacheFile(cf), lastPeek(0), pos(position), _limit(valid_length)
     {
     }
 
     CacheFile_Iterator::CacheFile_Iterator(const CacheFile_Iterator& rhs)
-        : cacheFile(rhs.cacheFile), lastPeek(rhs.lastPeek), pos(rhs.pos), limit(rhs.limit)
+        : cacheFile(rhs.cacheFile), lastPeek(rhs.lastPeek), pos(rhs.pos), _limit(rhs._limit)
     {
     }
 
@@ -116,7 +116,7 @@ namespace EveCache {
     CacheFile_Iterator& CacheFile_Iterator::operator=(const CacheFile_Iterator& rhs)
     {
         pos = rhs.pos;
-        limit = rhs.limit;
+        _limit = rhs._limit;
         cacheFile = rhs.cacheFile;
         return *this;
     }
@@ -135,7 +135,7 @@ namespace EveCache {
 
     bool CacheFile_Iterator::atEnd() const
     {
-        if (pos <= limit)
+        if (pos <= _limit)
             return false;
         return true;
     }
@@ -143,6 +143,11 @@ namespace EveCache {
     int CacheFile_Iterator::position() const
     {
         return pos;
+    }
+
+    int CacheFile_Iterator::limit() const
+    {
+        return _limit - pos;
     }
 
     int CacheFile_Iterator::peekInt() const
@@ -197,11 +202,22 @@ namespace EveCache {
         return r;
     }
 
+    void CacheFile_Iterator::seek(int lpos)
+    {
+        pos = lpos;
+    }
+
     bool CacheFile_Iterator::advance(int len)
     {
         pos += len;
         return atEnd();
     }
+
+    void CacheFile_Iterator::setLimit(int len)
+    {
+        _limit = pos + len;
+    }
+
 
     int CacheFile_Iterator::readShort()
     {
@@ -245,7 +261,13 @@ namespace EveCache {
         return r;
     }
 
-    
+    long long CacheFile_Iterator::readLongLong()
+    {
+        unsigned int a = static_cast<unsigned int>(readInt());
+        unsigned int b = static_cast<unsigned int>(readInt());
+        long long c = (long long)a | ((long long)b << 32);
+        return c;
+    }
 
 
     CacheFile_Iterator& CacheFile_Iterator::operator+=(int len)
