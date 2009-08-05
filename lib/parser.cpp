@@ -463,6 +463,29 @@ namespace EveCache {
                 stream->addMember(new SLongLong(val));
             }
             break;
+            case EShort:
+            {
+                int i = iter.readShort();
+                stream->addMember(new SInt(i));
+            }
+            break;
+            case EByte:
+            {
+                int i = iter.readChar();
+                stream->addMember(new SInt(i));
+            }
+            break;
+            case ESizedInt:
+            {
+                unsigned char len = iter.readChar();
+                if (len == 8)
+                    stream->addMember(new SLongLong(iter.readLongLong()));
+                else if (len == 4)
+                    stream->addMember(new SInt(iter.readInt())); // not observed
+                else if (len == 2)
+                    stream->addMember(new SInt(iter.readShort())); // not observed
+            }
+            break;
             case EIdent:
             {
                 unsigned int len = iter.readChar();
@@ -522,18 +545,6 @@ namespace EveCache {
             {
                 char t = iter.readChar();
                 stream->addMember(new SMarker(t));
-            }
-            break;
-            case EShort:
-            {
-                int i = iter.readShort();
-                stream->addMember(new SInt(i));
-            }
-            break;
-            case EByte:
-            {
-                int i = iter.readChar();
-                stream->addMember(new SInt(i));
             }
             break;
             case EObject:

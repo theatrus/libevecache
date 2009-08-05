@@ -38,6 +38,7 @@ namespace EveCache {
         EString = 0x2, // Another type of string, also ids
         EInteger = 0x04, // 4 byte, little endian?
         EByte = 0x6, // i think
+        ESizedInt = 0x2f, // when you can't decide ahead of time how long to make the integer...
         EShort = 0x05, // 2 byte
         EDict = 0x16, // N objects, consisting of key object and value object
         EObject = 0x17, // Object type ?
