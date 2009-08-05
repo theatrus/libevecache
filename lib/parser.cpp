@@ -384,6 +384,7 @@ namespace EveCache {
         // std::cout << "Got new data! oldlen " << std::dec
         //           << len << " len " <<  newdata.size() << std::endl;
 
+         ss << ">";
         return ss.str();
     }
 
@@ -472,6 +473,13 @@ namespace EveCache {
             case EString:
             {
                 int len = iter.readChar();
+                if (len == 0) {
+                    // HACK HACK HACK - 0 length string is probably the end of this substream
+                    // lets just give up now
+                    while(!iter.atEnd())
+                        iter.readChar();
+                    return;
+                }
                 std::string data = iter.readString(len);
                 stream->addMember(new SString(data));
             }
