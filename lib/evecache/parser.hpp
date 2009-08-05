@@ -46,6 +46,8 @@ namespace EveCache {
         ELongLong = 0x3, // 64 bit value?
         EDBHeader = 0x22, // a database header field of some variety
         ECompressedRow = 0x2a, // the datatype from hell, a RLEish compressed row
+        EDBRecords = 0x23, // another datatype containing ECompressedRows/DBRows
+        EStreamIdent = 0x1b, // one byte identifier
     } EStreamCode;
 
 
@@ -214,6 +216,23 @@ namespace EveCache {
         std::vector<unsigned char> _data;
     };
 
+/***********************************************************************/
+
+    class EVECACHE_API SDBRecords : public SNode {
+    public:
+        SDBRecords();
+        virtual std::string repl() const;
+    };
+
+/***********************************************************************/
+
+    class EVECACHE_API SStreamIdent : public SNode {
+    public:
+        SStreamIdent(int magic);
+        virtual std::string repl() const;
+    private:
+        int _id;
+    };
 
 
 /***********************************************************************/

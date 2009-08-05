@@ -25,6 +25,7 @@
 #include <assert.h>
 
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 
 namespace EveCache {
@@ -370,13 +371,54 @@ namespace EveCache {
     std::string SDBRow::repl() const
     {
         std::stringstream ss;
-        ss << " <DBRow> ";
+        ss << " <DBRow ";
+
+        std::vector<unsigned char>::const_iterator kk = _data.begin();
+
+         for (; kk != _data.end(); ++kk)
+        {
+            ss << std::setw(2) << 
+                std::setfill('0') << std::hex << static_cast<int>(*kk);
+        }
+
+        // std::cout << "Got new data! oldlen " << std::dec
+        //           << len << " len " <<  newdata.size() << std::endl;
+
+        return ss.str();
+    }
+
+
+/***********************************************************************/
+
+    SDBRecords::SDBRecords() : SNode(EDBRecords)
+    {
+    }
+
+    std::string SDBRecords::repl() const
+    {
+        std::stringstream ss;
+        ss << " <DBRecords> ";
+        return ss.str();
+    }
+
+/***********************************************************************/
+
+    SStreamIdent::SStreamIdent(int magic) 
+        : SNode(EStreamIdent), _id(magic)
+    {
+    }
+
+    std::string SStreamIdent::repl() const
+    {
+        std::stringstream ss;
+        ss << " <SStreamIdent " << _id << "> ";
         return ss.str();
     }
 
 
 
 /***********************************************************************/
+
     Parser::Parser()
     {
 
@@ -536,19 +578,21 @@ namespace EveCache {
                 std::vector<unsigned char> newdata;
                 rle_unpack(olddata, len, newdata);
 
-                // std::vector<unsigned char>::iterator kk = newdata.begin();
-
-                // for (; kk != newdata.end(); ++kk)
-                // {
-                //     std::cout << " " << std::hex << static_cast<int>(*kk);
-                // }
-                // std::cout << std::endl;
-
-                // std::cout << "Got new data! oldlen " << std::dec 
-                //           << len << " len " <<  newdata.size() << std::endl;
-
                 stream->addMember(new SDBRow(magic, newdata));
 
+            }
+            break;
+            case EDBRecords:
+            {
+                SDBRecords* rec = new SDBRecords();
+                stream->addMember(rec);
+                parse(rec, iter, 1);
+            }
+            break;
+            case EStreamIdent:
+            {
+                int id = iter.readChar();
+                stream->addMember(new SStreamIdent(id));
             }
             break;
             case 0x2d:
