@@ -514,17 +514,7 @@ namespace EveCache {
                 unsigned int len = iter.readChar();
                 SDict* dict = new SDict(len * 2); // key & val
                 stream->addMember(dict);
-                for (unsigned int i = 0 ; i < len; i++)
-                {
-                    SString *key = new SString("key");
-                    SString *val = new SString("val");
-                    parse(val, iter, 1);
-                    parse(key, iter, 1);
-                    dict->addMember(key);
-                    dict->addMember(val);
-
-                }
-                    //parse(dict, iter, len * 2);
+                parse(dict, iter, len * 2);
             }
             break;
             case ETuple2:
@@ -633,7 +623,7 @@ namespace EveCache {
                     msg << "Didn't encounter a double 0x2d where I thought there should be one at " << iter.position();
                     throw ParseException(msg.str());
                 }
-                stream->addMember(new SString("2D2D MAGIC"));
+                //stream->addMember(new SString("2D2D MAGIC"));
                 //return;
             }
             break;
