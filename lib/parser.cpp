@@ -514,7 +514,17 @@ namespace EveCache {
                 unsigned int len = iter.readChar();
                 SDict* dict = new SDict(len * 2); // key & val
                 stream->addMember(dict);
-                parse(dict, iter, len * 2);
+                for (unsigned int i = 0 ; i < len; i++)
+                {
+                    SString *key = new SString("key");
+                    SString *val = new SString("val");
+                    parse(val, iter, 1);
+                    parse(key, iter, 1);
+                    dict->addMember(key);
+                    dict->addMember(val);
+
+                }
+                    //parse(dict, iter, len * 2);
             }
             break;
             case ETuple2:
