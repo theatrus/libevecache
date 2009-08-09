@@ -350,7 +350,7 @@ namespace EveCache {
 
 /***********************************************************************/
 
-    SSubstream::SSubstream(int len) : SNode(ENone), _len(len)
+    SSubstream::SSubstream(int len) : SNode(ESubstream), _len(len)
     {
     }
 
@@ -496,15 +496,17 @@ namespace EveCache {
             case EString:
             {
                 int len = iter.readChar();
+                std::string data = iter.readString(len);
+                stream->addMember(new SString(data));
+
                 if (len == 0) {
                     // HACK HACK HACK - 0 length string is probably the end of this substream
                     // lets just give up now
+                    std::cout << " from position " << std::hex << iter.position() << std::dec << std::endl;
                     while(!iter.atEnd())
                         iter.readChar();
                     return;
                 }
-                std::string data = iter.readString(len);
-                stream->addMember(new SString(data));
             }
             break;
             case EDict:
@@ -541,6 +543,12 @@ namespace EveCache {
 
             }
             break;
+            case E0Tuple:
+            {
+                STuple* tuple = new STuple(0);
+                stream->addMember(tuple);
+            }
+            break;
             case EMarker:
             {
                 char t = iter.readChar();
@@ -559,13 +567,7 @@ namespace EveCache {
                 SNode *obj = new SDBHeader();
                 stream->addMember(obj);
                 parse(obj, iter, 1);
-                char c = iter.readChar();
-                if (c == 0x2d) {
-                    c = iter.readChar();
-                    if (c == 0x2d) {
-                        std::cout << " Valid end of dbheader? " << std::endl;
-                    }
-                }
+    
             }
             break;
             case ESubstream:
@@ -605,7 +607,7 @@ namespace EveCache {
             {
                 SDBRecords* rec = new SDBRecords();
                 stream->addMember(rec);
-                parse(rec, iter, 1);
+                parse(rec, iter, -1);
             }
             break;
             case EStreamIdent:
@@ -621,14 +623,24 @@ namespace EveCache {
                     msg << "Didn't encounter a double 0x2d where I thought there should be one at " << iter.position();
                     throw ParseException(msg.str());
                 }
+                stream->addMember(new SString("2D2D MAGIC"));
                 //return;
             }
             break;
             default:
+            {
+                if (iter.limit() == 0xa && check == 0x0)
+                {
+                    while(!iter.atEnd())
+                        iter.readChar();
+                    // HACK HACK - valid end of file, in bizarro CCP land?
+                    return;
+                }
                 std::stringstream msg;
                 msg << "Can't identify type 0x" << std::hex << static_cast<unsigned int>(check)
-                    << " at position 0x" << iter.position();
+                    << " at position 0x" << iter.position() << " limit " << iter.limit();
                 throw ParseException(msg.str());
+            }
             }
             limit -= 1;
         }

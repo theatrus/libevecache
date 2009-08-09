@@ -32,7 +32,8 @@ namespace EveCache {
         ETuple = 0x14, // a tuple of N objects
         ETuple2 = 0x15, // a tuple of N objects, variant 2
         E2Tuple = 0x2c, // a tuple of 2 objects
-        E1Tuple = 0x25, // a tuple of N objects
+        E1Tuple = 0x25, // a tuple of 1 objects
+        E0Tuple = 0x24, // a tuple of 0 objects
         EMarker = 0x11, // A one byte identifier code
         EIdent = 0x13, // an identifier string
         EString = 0x2, // Another type of string, also ids
