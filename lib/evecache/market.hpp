@@ -80,7 +80,13 @@ namespace EveCache {
     class MarketList {
     public:
         MarketList(int type, int region);
+        int type() const { return _type; }
+        int region() const { return _region; }
+        void addOrder(MarketOrder& order);
+
     private:
+        int _type;
+        int _region;
         std::vector<MarketOrder> _sellOrders;
         std::vector<MarketOrder> _buyOrders;
     };
