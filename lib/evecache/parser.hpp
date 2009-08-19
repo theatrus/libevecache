@@ -213,9 +213,12 @@ namespace EveCache {
     class EVECACHE_API SDBRow : public SNode {
     public:
         SDBRow(int magic, const std::vector<unsigned char>& data);
+        bool isLast() const;
+        void setLast(bool l);
         virtual std::string repl() const;
     private:
         int _id;
+        bool _last;
         std::vector<unsigned char> _data;
     };
 

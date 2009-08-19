@@ -365,7 +365,7 @@ namespace EveCache {
 /***********************************************************************/
 
     SDBRow::SDBRow(int magic, const std::vector<unsigned char>& data) 
-        : SNode(ECompressedRow), _id(magic), _data(data)
+        : SNode(ECompressedRow), _id(magic), _last(false), _data(data)
     {
     }
 
@@ -376,16 +376,16 @@ namespace EveCache {
 
         std::vector<unsigned char>::const_iterator kk = _data.begin();
 
-         for (; kk != _data.end(); ++kk)
+        for (; kk != _data.end(); ++kk)
         {
-            ss << std::setw(2) << 
+            ss << std::setw(2) <<
                 std::setfill('0') << std::hex << static_cast<int>(*kk);
         }
 
-        // std::cout << "Got new data! oldlen " << std::dec
-        //           << len << " len " <<  newdata.size() << std::endl;
+        if (isLast())
+            ss << " LAST ";
 
-         ss << ">";
+        ss << ">";
         return ss.str();
     }
 
@@ -439,12 +439,9 @@ namespace EveCache {
     void Parser::parse(SNode* stream, CacheFile_Iterator &iter, int limit)
     {
         char check;
-        std::cout << "   --> New stream with inner type " << std::hex << stream->type() << std::endl;
+        SDBRow *lastDbRow = NULL;
         while (!iter.atEnd() && limit != 0)
         {
-            std::cout << "Stream len: " << stream->members().size() << " Limit " << limit
-                      << " bytelimit " << iter.limit();
-            std::cout << std::endl;
             check = iter.readChar() & 0x3f; // magic
             switch(check) {
             case ENone:
@@ -503,7 +500,6 @@ namespace EveCache {
                 if (len == 0) {
                     // HACK HACK HACK - 0 length string is probably the end of this substream
                     // lets just give up now
-                    std::cout << " from position " << std::hex << iter.position() << std::dec << std::endl;
                     while(!iter.atEnd())
                         iter.readChar();
                     return;
@@ -599,8 +595,8 @@ namespace EveCache {
 
                 std::vector<unsigned char> newdata;
                 rle_unpack(olddata, len, newdata);
-
-                stream->addMember(new SDBRow(magic, newdata));
+                lastDbRow = new SDBRow(magic, newdata);
+                stream->addMember(lastDbRow);
 
             }
             break;
@@ -624,8 +620,8 @@ namespace EveCache {
                     msg << "Didn't encounter a double 0x2d where I thought there should be one at " << iter.position();
                     throw ParseException(msg.str());
                 }
-                //stream->addMember(new SString("2D2D MAGIC"));
-                //return;
+                if (lastDbRow)
+                    lastDbRow->setLast(true);
             }
             break;
             default:
@@ -645,8 +641,6 @@ namespace EveCache {
             }
             limit -= 1;
         }
-        std::cout << " <-- parser exiting bytelimit : " <<
-            iter.limit() << " inner type " << std::hex << stream->type() << std::endl;
 
     }
 
