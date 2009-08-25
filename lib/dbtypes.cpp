@@ -8,7 +8,7 @@ namespace EveCache {
 
     std::map<std::string, unsigned char> ColumnLookup::_idLookup;
     std::map<unsigned char, std::string> ColumnLookup::_nameLookup;
-
+    bool ColumnLookup::isInit = false;
 
     void ColumnLookup::insert(const char* name, unsigned char id)
     {
@@ -18,7 +18,7 @@ namespace EveCache {
 
     void ColumnLookup::init()
     {
-        if (isInit == true)
+        if (ColumnLookup::isInit == true)
             return;
         insert("bid", 116);
         insert("duration", 126);
@@ -35,6 +35,7 @@ namespace EveCache {
         insert("volRemain", 161);
         insert("jumps", 41);
         insert("typeID", 74);
+        ColumnLookup::isInit = true;
     }
 
 

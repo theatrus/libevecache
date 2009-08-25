@@ -364,7 +364,7 @@ namespace EveCache {
 
 /***********************************************************************/
 
-    SDBRow::SDBRow(int magic, const std::vector<unsigned char>& data) 
+    SDBRow::SDBRow(int magic, const std::vector<unsigned char>& data)
         : SNode(ECompressedRow), _id(magic), _last(false), _data(data)
     {
     }
@@ -389,6 +389,16 @@ namespace EveCache {
         return ss.str();
     }
 
+    bool SDBRow::isLast() const
+    {
+        return _last;
+    }
+
+    void SDBRow::setLast(bool last)
+    {
+        _last = last;
+    }
+
 
 /***********************************************************************/
 
@@ -405,7 +415,7 @@ namespace EveCache {
 
 /***********************************************************************/
 
-    SStreamIdent::SStreamIdent(int magic) 
+    SStreamIdent::SStreamIdent(int magic)
         : SNode(EStreamIdent), _id(magic)
     {
     }
@@ -564,7 +574,7 @@ namespace EveCache {
                 SNode *obj = new SDBHeader();
                 stream->addMember(obj);
                 parse(obj, iter, 1);
-    
+
             }
             break;
             case ESubstream:
