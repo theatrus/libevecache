@@ -501,6 +501,7 @@ namespace EveCache {
                 stream->addMember(new SIdent(data));
             }
             break;
+            case EString2:
             case EString:
             {
                 int len = iter.readChar();

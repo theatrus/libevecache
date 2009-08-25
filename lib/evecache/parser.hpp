@@ -38,6 +38,7 @@ namespace EveCache {
         EMarker = 0x11, // A one byte identifier code
         EIdent = 0x13, // an identifier string
         EString = 0x2, // Another type of string, also ids
+        EString2 = 0x2e, // stringtastic
         EInteger = 0x04, // 4 byte, little endian?
         EByte = 0x6, // i think
         ESizedInt = 0x2f, // when you can't decide ahead of time how long to make the integer...

@@ -1,6 +1,7 @@
 #include "evecache/dbtypes.hpp"
 
 namespace EveCache {
+
     unsigned long windows_to_unix_time(unsigned long long time)
     {
         return (time / 10000000LL)-11644473600LL;

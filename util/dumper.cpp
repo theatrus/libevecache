@@ -83,9 +83,11 @@ int main(int argc, char** argv)
 
 
         // TODO; more than one stream
-        const std::vector<SNode*>& streams = parser.streams()[0]->members();
-        std::cout << "Beginning dump..." << std::endl;
-        dump(streams, 0);
+        for (int i = 0; i < parser.streams().size(); i++) {
+            const std::vector<SNode*>& streams = parser.streams()[i]->members();
+            std::cout << "Beginning dump..." << std::endl;
+            dump(streams, 0);
+        }
     }
     std::cout << std::endl;
 }
