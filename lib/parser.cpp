@@ -708,6 +708,9 @@ namespace EveCache {
             break;
             case 0:
                 break;
+            case EEOF:
+                return;
+                break;
             default:
             {
                 if (iter.limit() == 0xa && check == 0x0)
