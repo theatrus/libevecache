@@ -5,7 +5,11 @@ platform = ARGUMENTS.get('OS', Platform())
 if platform.name == "win32":
    lenv.Append(CPPFLAGS=["/EHsc"])
    env.Append(CPPFLAGS=["/EHsc"])
-   lenv.Append(CPPDEFINES=["EVECACHE_EXPORT"])
+   lenv.Append(CPPDEFINES=["EVECACHE_EXPORT", "WIN32"])
+   env.Append(CPPDEFINES=["WIN32"])
 
 lib = lenv.SharedLibrary('evecache', Glob('lib/*cpp'))
-env.Program('util/dumper.cpp', LIBS=lib)
+if platform.name == "win32":
+   env.Program('util/dumper.cpp', LIBS='evecache') # try to link with .lib, not .dll
+else:
+   env.Program('util/dumper.cpp', LIBS=lib)

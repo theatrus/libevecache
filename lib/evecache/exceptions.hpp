@@ -24,7 +24,7 @@
 
 namespace EveCache {
 
-    class ParseException {
+    class EVECACHE_API ParseException {
     public:
         ParseException(const std::string& msg);
         ParseException(const char* m);
