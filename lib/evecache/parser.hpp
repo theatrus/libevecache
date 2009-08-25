@@ -34,13 +34,19 @@ namespace EveCache {
         ETuple2 = 0x15, // a tuple of N objects, variant 2
         E2Tuple = 0x2c, // a tuple of 2 objects
         E1Tuple = 0x25, // a tuple of 1 objects
+        E1Tuple2 = 0x27, // a tuple of 1 objects, variant 2
         E0Tuple = 0x24, // a tuple of 0 objects
+        E0Tuple2 = 0x26,
         EMarker = 0x11, // A one byte identifier code
         EIdent = 0x13, // an identifier string
         EString = 0x2, // Another type of string, also ids
         EString2 = 0x2e, // stringtastic
-        EString3 = 0xf, // really? another?
+        EString3 = 0xf, // really? another? single character string
+        EUnicodeString = 0x12,
+        EEmptyString = 0x28, // empty
         EInteger = 0x04, // 4 byte, little endian?
+        EReal = 0x0a, // floating point, 64 bits, assume matches machine double type
+        E0Real = 0x0b,
         E0Integer = 0x08, // int  == 0
         ENeg1Integer = 0x07, // int == -1
         E1Integer = 0x09, // int == 1
@@ -183,6 +189,18 @@ namespace EveCache {
     private:
         int _value;
     };
+
+/***********************************************************************/
+
+    class EVECACHE_API SReal : public SNode {
+    public:
+        SReal(double val);
+        virtual double value() const;
+        virtual std::string repl() const;
+    private:
+        double _value;
+    };
+
 
 /***********************************************************************/
 

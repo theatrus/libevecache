@@ -301,6 +301,26 @@ namespace EveCache {
         return ss.str();
     }
 
+
+/***********************************************************************/
+
+    SReal::SReal(double val) : SNode(EReal), _value(val)
+    {
+    }
+
+    double SReal::value() const
+    {
+        return _value;
+    }
+
+    std::string SReal::repl() const
+    {
+        std::stringstream ss;
+        ss << " <SReal '" << value() << "'> ";
+        return ss.str();
+    }
+
+
 /***********************************************************************/
 
     SLongLong::SLongLong(long long val) : SNode(ELongLong), _value(val)
@@ -459,6 +479,17 @@ namespace EveCache {
                 stream->addMember(new SNone());
             }
             break;
+            case EReal:
+            {
+                double val = iter.readDouble();
+                stream->addMember(new SReal(val));
+            }
+            break;
+            case E0Real:
+            {
+                stream->addMember(new SReal(0));
+            }
+            break;
             case EInteger:
             {
                 unsigned int val = iter.readInt();
@@ -514,8 +545,16 @@ namespace EveCache {
             case EIdent:
             {
                 unsigned int len = iter.readChar();
+                if ((len&0xFF) == 0xFF) {
+                    len = iter.readInt();
+                }
                 std::string data = iter.readString(len);
                 stream->addMember(new SIdent(data));
+            }
+            break;
+            case EEmptyString:
+            {
+                stream->addMember(new SString(""));
             }
             break;
             case EString3:
@@ -524,6 +563,7 @@ namespace EveCache {
                 stream->addMember(new SString(data));
             }
             break;
+            case EUnicodeString:
             case EString2:
             case EString:
             {
@@ -531,7 +571,7 @@ namespace EveCache {
                 std::string data = iter.readString(len);
                 stream->addMember(new SString(data));
 
-                if (len == 0) {
+                if (len == 0 && (iter.limit() - iter.position()) <= 0xf) {
                     // HACK HACK HACK - 0 length string is probably the end of this substream
                     // lets just give up now
                     while(!iter.atEnd())
@@ -543,6 +583,9 @@ namespace EveCache {
             case EDict:
             {
                 unsigned int len = iter.readChar();
+                if ((len & 0xFF) == 0xFF) {
+                    len = iter.readInt();
+                }
                 SDict* dict = new SDict(len * 2); // key & val
                 stream->addMember(dict);
                 parse(dict, iter, len * 2);
@@ -552,6 +595,9 @@ namespace EveCache {
             case ETuple:
             {
                 unsigned int len = iter.readChar();
+                if ((len & 0xFF) == 0xFF) {
+                    len = iter.readInt();
+                }
                 STuple* tuple = new STuple(len);
                 stream->addMember(tuple);
                 parse(tuple, iter, len);
@@ -566,6 +612,7 @@ namespace EveCache {
 
             }
             break;
+            case E1Tuple2:
             case E1Tuple:
             {
                 STuple* tuple = new STuple(1);
@@ -574,6 +621,7 @@ namespace EveCache {
 
             }
             break;
+            case E0Tuple2:
             case E0Tuple:
             {
                 STuple* tuple = new STuple(0);
