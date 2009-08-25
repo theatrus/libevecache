@@ -39,7 +39,13 @@ namespace EveCache {
         EIdent = 0x13, // an identifier string
         EString = 0x2, // Another type of string, also ids
         EString2 = 0x2e, // stringtastic
+        EString3 = 0xf, // really? another?
         EInteger = 0x04, // 4 byte, little endian?
+        E0Integer = 0x08, // int  == 0
+        ENeg1Integer = 0x07, // int == -1
+        E1Integer = 0x09, // int == 1
+        EBoolTrue = 0x1f,
+        EBoolFalse = 0x20,
         EByte = 0x6, // i think
         ESizedInt = 0x2f, // when you can't decide ahead of time how long to make the integer...
         EShort = 0x05, // 2 byte

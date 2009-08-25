@@ -67,7 +67,7 @@ int main(int argc, char** argv)
         std::cerr << "Error: Syntax: " << argv[0] << " [filename]" << std::endl;
         return -1;
     }
-
+    std::cout << "File: " << argv[1] << std::endl;
     {
         std::string fileName(argv[1]);
         CacheFile cF(fileName);

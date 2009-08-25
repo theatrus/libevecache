@@ -465,6 +465,23 @@ namespace EveCache {
                 stream->addMember(new SInt(val));
             }
             break;
+            case EBoolFalse:
+            case E0Integer:
+            {
+                stream->addMember(new SInt(0));
+            }
+            break;
+            case EBoolTrue: /* Replace with a real Bool node one day */
+            case E1Integer:
+            {
+                stream->addMember(new SInt(1));
+            }
+            break;
+            case ENeg1Integer:
+            {
+                stream->addMember(new SInt(-1));
+            };
+            break;
             case ELongLong:
             {
                 long long val = iter.readLongLong();
@@ -499,6 +516,12 @@ namespace EveCache {
                 unsigned int len = iter.readChar();
                 std::string data = iter.readString(len);
                 stream->addMember(new SIdent(data));
+            }
+            break;
+            case EString3:
+            {
+                std::string data = iter.readString(1);
+                stream->addMember(new SString(data));
             }
             break;
             case EString2:
@@ -635,6 +658,8 @@ namespace EveCache {
                     lastDbRow->setLast(true);
             }
             break;
+            case 0:
+                break;
             default:
             {
                 if (iter.limit() == 0xa && check == 0x0)
@@ -661,12 +686,13 @@ namespace EveCache {
         while(!iter.atEnd()) {
             char check = iter.readChar();
             SNode* stream = new SNode(EStreamStart);
+
             if (check != EStreamStart)
                 throw ParseException("No stream start detected...");
 
+            unsigned int len = iter.readInt(); // a hack?
             _streams.push_back(stream);
-            parse(stream, iter, -1); // -1 = not sure how long this will be, just keep on going...
-
+            parse(stream, iter, -1); // -1 = not sure how long this will be
 
         }
 
