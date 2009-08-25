@@ -21,6 +21,7 @@
 #define _EC_EXCEPTIONS_H_
 
 #include <string>
+#include "evecache/config.hpp"
 
 namespace EveCache {
 
