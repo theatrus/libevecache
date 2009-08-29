@@ -472,7 +472,12 @@ namespace EveCache {
         SDBRow *lastDbRow = NULL;
         while (!iter.atEnd() && limit != 0)
         {
-            check = iter.readChar() & 0x3f; // magic
+            try {
+                check = iter.readChar() & 0x3f; // magic
+            } catch (EndOfFileException &e) {
+                return;
+            }
+
             switch(check) {
             case ENone:
             {
@@ -708,9 +713,6 @@ namespace EveCache {
             break;
             case 0:
                 break;
-            case EEOF:
-                return;
-                break;
             default:
             {
                 if (iter.limit() == 0xa && check == 0x0)
@@ -734,19 +736,22 @@ namespace EveCache {
     void Parser::parse(CacheFile_Iterator& iter)
     {
 
-        while(!iter.atEnd()) {
-            char check = iter.readChar();
-            SNode* stream = new SNode(EStreamStart);
+        try {
+            while(!iter.atEnd()) {
+                char check = iter.readChar();
+                SNode* stream = new SNode(EStreamStart);
 
-            if (check != EStreamStart)
-                throw ParseException("No stream start detected...");
+                if (check != EStreamStart)
+                    throw ParseException("No stream start detected...");
 
-            unsigned int len = iter.readInt(); // a hack?
-            _streams.push_back(stream);
-            parse(stream, iter, -1); // -1 = not sure how long this will be
+                unsigned int len = iter.readInt(); // a hack?
+                _streams.push_back(stream);
+                parse(stream, iter, -1); // -1 = not sure how long this will be
 
+            }
+        } catch (EndOfFileException &e) {
+            // Ignore the exception, parser has run amok!
         }
-
     }
 
     std::vector<SNode*> Parser::streams() const

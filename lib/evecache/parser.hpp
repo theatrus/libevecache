@@ -64,7 +64,6 @@ namespace EveCache {
         ECompressedRow = 0x2a, // the datatype from hell, a RLEish compressed row
         EDBRecords = 0x23, // another datatype containing ECompressedRows/DBRows
         EStreamIdent = 0x1b, // one byte identifier,
-        EEOF = 0x3f, // end of file...
     } EStreamCode;
 
 

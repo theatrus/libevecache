@@ -25,6 +25,12 @@
 
 namespace EveCache {
 
+    class EVECACHE_API EndOfFileException {
+    public:
+        EndOfFileException();
+        operator std::string () const;
+    };
+
     class EVECACHE_API ParseException {
     public:
         ParseException(const std::string& msg);

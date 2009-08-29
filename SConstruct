@@ -7,6 +7,9 @@ if platform.name == "win32":
    env.Append(CPPFLAGS=["/EHsc", "/MD"])
    lenv.Append(CPPDEFINES=["EVECACHE_EXPORT", "WIN32"])
    env.Append(CPPDEFINES=["WIN32"])
+else:
+   lenv.Append(CPPFLAGS=["-g3"])
+   env.Append(CPPFLAGS=["-g3"])
 
 lib = lenv.SharedLibrary('evecache', Glob('lib/*cpp'))
 if platform.name == "win32":

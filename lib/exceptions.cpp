@@ -20,6 +20,15 @@
 #include "evecache/exceptions.hpp"
 
 namespace EveCache {
+    EndOfFileException::EndOfFileException()
+    {
+    }
+
+    EndOfFileException::operator std::string () const
+    {
+        return std::string("End of file");
+    }
+
     ParseException::ParseException(const std::string &m) : message(m)
     {
     }

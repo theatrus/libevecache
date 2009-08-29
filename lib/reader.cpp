@@ -19,6 +19,7 @@
 // http://gitorious.org/libevecache
 
 #include "evecache/reader.hpp"
+#include "evecache/exceptions.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -33,7 +34,7 @@ namespace EveCache {
 
     }
 
-    CacheFile::CacheFile(const CacheFile&rhs) : length(rhs.length), valid(rhs.valid), 
+    CacheFile::CacheFile(const CacheFile&rhs) : length(rhs.length), valid(rhs.valid),
                                           filename(rhs.filename)
     {
         contents = new unsigned char[length];
@@ -64,7 +65,7 @@ namespace EveCache {
         return valid;
     }
 
-    int CacheFile::getLength() const 
+    int CacheFile::getLength() const
     {
         if (!valid)
             return -1;
@@ -73,19 +74,19 @@ namespace EveCache {
 
     CacheFile_Iterator CacheFile::begin() const
     {
-        return CacheFile_Iterator(this, 0, getLength());
+        return CacheFile_Iterator(this, 0, getLength() - 1);
     }
 
     CacheFile_Iterator CacheFile::end() const
     {
-        return CacheFile_Iterator(this, length + 1, getLength());
+        return CacheFile_Iterator(this, length, getLength() - 1);
     }
-    
+
     unsigned char CacheFile::byteAt(int pos) const
     {
         if (pos < length)
             return contents[pos];
-        return 0xFF;
+        throw EndOfFileException();
     }
 
     void CacheFile::peekAt(unsigned char *data, int at, int len) const
@@ -93,10 +94,10 @@ namespace EveCache {
         // Broken for big endian...
         memcpy(data, &contents[at], len);
     }
-    
+
 
 /**
- * Iterator 
+ * Iterator
  */
 
     CacheFile_Iterator::CacheFile_Iterator(CacheFile const* cf, int position, int valid_length) :
@@ -152,8 +153,8 @@ namespace EveCache {
 
     int CacheFile_Iterator::peekInt() const
     {
-        int i = cacheFile->byteAt(pos) | 
-            (cacheFile->byteAt(pos+1) << 8) | 
+        int i = cacheFile->byteAt(pos) |
+            (cacheFile->byteAt(pos+1) << 8) |
             (cacheFile->byteAt(pos+2) << (8+8)) |
             (cacheFile->byteAt(pos+3) << (8+8+8));
         return i;
@@ -161,7 +162,7 @@ namespace EveCache {
 
     int CacheFile_Iterator::peekShort() const
     {
-        int i = cacheFile->byteAt(pos) | 
+        int i = cacheFile->byteAt(pos) |
             (cacheFile->byteAt(pos+1) << 8);
         return i;
     }
