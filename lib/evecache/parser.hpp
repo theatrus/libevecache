@@ -275,6 +275,7 @@ namespace EveCache {
         std::vector<SNode*> streams() const;
     protected:
         void parse(SNode* node, CacheFile_Iterator& iter, int limit);
+        int getLen(CacheFile_Iterator& iter);
     private:
         std::vector<SNode*> _streams;
     };

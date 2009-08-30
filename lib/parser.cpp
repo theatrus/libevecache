@@ -549,10 +549,7 @@ namespace EveCache {
             break;
             case EIdent:
             {
-                unsigned int len = iter.readChar();
-                if ((len&0xFF) == 0xFF) {
-                    len = iter.readInt();
-                }
+                unsigned int len = getLen(iter);
                 std::string data = iter.readString(len);
                 stream->addMember(new SIdent(data));
             }
@@ -587,10 +584,7 @@ namespace EveCache {
             break;
             case EDict:
             {
-                unsigned int len = iter.readChar();
-                if ((len & 0xFF) == 0xFF) {
-                    len = iter.readInt();
-                }
+                unsigned int len = getLen(iter);
                 SDict* dict = new SDict(len * 2); // key & val
                 stream->addMember(dict);
                 parse(dict, iter, len * 2);
@@ -599,10 +593,7 @@ namespace EveCache {
             case ETuple2:
             case ETuple:
             {
-                unsigned int len = iter.readChar();
-                if ((len & 0xFF) == 0xFF) {
-                    len = iter.readInt();
-                }
+                unsigned int len = getLen(iter);
                 STuple* tuple = new STuple(len);
                 stream->addMember(tuple);
                 parse(tuple, iter, len);
@@ -656,9 +647,7 @@ namespace EveCache {
             break;
             case ESubstream:
             {
-                unsigned int len = iter.readChar();
-                if ((len & 0xff) == 0xFF)
-                    len = iter.readInt();
+                unsigned int len = getLen(iter);
                 char sig = iter.readChar(); // 0x7e
 
                 assert(sig == 0x7e);
@@ -674,7 +663,7 @@ namespace EveCache {
             {
                 iter.readChar(); // Datatype 0x1b - special magic id?
                 int magic = iter.readChar();  // Data for 0x1b
-                int len = iter.readChar() & 0xFF;
+                unsigned int len = getLen(iter);
                 std::string compdata = iter.readString(len);
 
                 const unsigned char* olddata = reinterpret_cast<const unsigned char*>
@@ -696,7 +685,7 @@ namespace EveCache {
             break;
             case EStreamIdent:
             {
-                int id = iter.readChar();
+                unsigned int id = getLen(iter);
                 stream->addMember(new SStreamIdent(id));
             }
             break;
@@ -752,6 +741,14 @@ namespace EveCache {
         } catch (EndOfFileException &e) {
             // Ignore the exception, parser has run amok!
         }
+    }
+
+    int Parser::getLen(CacheFile_Iterator& iter)
+    {
+        unsigned int len = iter.readChar();
+        if ((len & 0xff) == 0xFF)
+            len = iter.readInt();
+        return len;
     }
 
     std::vector<SNode*> Parser::streams() const
