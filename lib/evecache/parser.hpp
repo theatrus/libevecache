@@ -220,7 +220,7 @@ namespace EveCache {
     class EVECACHE_API SObject : public SNode {
     public:
         SObject();
-        virtual std::string SObject::name() const;
+        virtual std::string name() const;
         virtual std::string repl() const;
     private:
     };
@@ -262,7 +262,7 @@ namespace EveCache {
 
     class EVECACHE_API Parser {
     public:
-        Parser::Parser(CacheFile_Iterator *iter);
+        Parser(CacheFile_Iterator *iter);
         ~Parser();
         void parse();
         std::vector<SNode*> streams() const;
@@ -277,11 +277,11 @@ namespace EveCache {
         void shareSkip();
     private:
         std::vector<SNode*> _streams;
-	CacheFile_Iterator *_iter;
-	unsigned int _sharecount;   // number of shared obj
-	unsigned int _sharecursor;  // current index into 
-	unsigned int *_sharemap;    // list of slot mappings
-	SNode **_shareobj;          // list of already discovered shareds
+        CacheFile_Iterator *_iter;
+        unsigned int _sharecount;   // number of shared obj
+        unsigned int _sharecursor;  // current index into
+        unsigned int *_sharemap;    // list of slot mappings
+        SNode **_shareobj;          // list of already discovered shareds
     };
 
 
