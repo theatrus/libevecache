@@ -773,11 +773,11 @@ namespace EveCache {
     SNode* Parser::getDBRow()
     {
         // get header
-        SObject* head = (SObject*)parseone();
+        SObject* head = dynamic_cast<SObject*>(parseone());
 //std::cerr << "DBRow: head: " << head << " == " << head->repl() << std::endl;
         if (head->name().compare("blue.DBRowDescriptor"))
                 throw ParseException("bad descriptor name");
-        STuple* fields = (STuple*)head->members()[0]->members()[1]->members()[0];
+        STuple* fields = dynamic_cast<STuple*>(head->members()[0]->members()[1]->members()[0]);
 //std::cerr << "DBRow: fields: " << fields << " == " << fields->repl() << ", size " << static_cast<unsigned int>(fields->members().size()) << std::endl;
 
         unsigned int len = getLen();
