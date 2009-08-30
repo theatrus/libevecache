@@ -22,6 +22,7 @@
 #define _EC_READER_H_
 
 #include <string>
+#include <vector>
 #include "evecache/config.hpp"
 
 namespace EveCache {
@@ -32,6 +33,7 @@ namespace EveCache {
     public:
         CacheFile(const std::string &filename);
         CacheFile(const CacheFile&);
+        CacheFile(std::vector<unsigned char> &buf);
         ~CacheFile();
         bool readFile();
         int getLength() const;
