@@ -463,9 +463,9 @@ namespace EveCache {
 
 /***********************************************************************/
 
-    Parser::Parser()
+    Parser::Parser(CacheFile_Iterator *iter) 
+        : _iter(iter)
     {
-
     }
 
     Parser::~Parser()
@@ -478,14 +478,14 @@ namespace EveCache {
         _streams.clear();
     }
 
-    void Parser::parse(SNode* stream, CacheFile_Iterator &iter, int limit)
+    void Parser::parse(SNode* stream, int limit)
     {
         char check;
         SDBRow *lastDbRow = NULL;
-        while (!iter.atEnd() && limit != 0)
+        while (!_iter->atEnd() && limit != 0)
         {
             try {
-                check = iter.readChar() & 0x3f; // magic
+                check = _iter->readChar() & 0x3f; // magic
             } catch (EndOfFileException &e) {
                 return;
             }
@@ -498,7 +498,7 @@ namespace EveCache {
             break;
             case EReal:
             {
-                double val = iter.readDouble();
+                double val = _iter->readDouble();
                 stream->addMember(new SReal(val));
             }
             break;
@@ -509,7 +509,7 @@ namespace EveCache {
             break;
             case EInteger:
             {
-                unsigned int val = iter.readInt();
+                unsigned int val = _iter->readInt();
                 stream->addMember(new SInt(val));
             }
             break;
@@ -532,37 +532,37 @@ namespace EveCache {
             break;
             case ELongLong:
             {
-                long long val = iter.readLongLong();
+                long long val = _iter->readLongLong();
                 stream->addMember(new SLongLong(val));
             }
             break;
             case EShort:
             {
-                int i = iter.readShort();
+                int i = _iter->readShort();
                 stream->addMember(new SInt(i));
             }
             break;
             case EByte:
             {
-                int i = iter.readChar();
+                int i = _iter->readChar();
                 stream->addMember(new SInt(i));
             }
             break;
             case ESizedInt:
             {
-                unsigned char len = iter.readChar();
+                unsigned char len = _iter->readChar();
                 if (len == 8)
-                    stream->addMember(new SLongLong(iter.readLongLong()));
+                    stream->addMember(new SLongLong(_iter->readLongLong()));
                 else if (len == 4)
-                    stream->addMember(new SInt(iter.readInt())); // not observed
+                    stream->addMember(new SInt(_iter->readInt())); // not observed
                 else if (len == 2)
-                    stream->addMember(new SInt(iter.readShort())); // not observed
+                    stream->addMember(new SInt(_iter->readShort())); // not observed
             }
             break;
             case EIdent:
             {
-                unsigned int len = getLen(iter);
-                std::string data = iter.readString(len);
+                unsigned int len = getLen();
+                std::string data = _iter->readString(len);
                 stream->addMember(new SIdent(data));
             }
             break;
@@ -573,7 +573,7 @@ namespace EveCache {
             break;
             case EString3:
             {
-                std::string data = iter.readString(1);
+                std::string data = _iter->readString(1);
                 stream->addMember(new SString(data));
             }
             break;
@@ -581,34 +581,34 @@ namespace EveCache {
             case EString2:
             case EString:
             {
-                int len = iter.readChar();
-                std::string data = iter.readString(len);
+                int len = _iter->readChar();
+                std::string data = _iter->readString(len);
                 stream->addMember(new SString(data));
 
-                if (len == 0 && (iter.limit() - iter.position()) <= 0xf) {
+                if (len == 0 && (_iter->limit() - _iter->position()) <= 0xf) {
                     // HACK HACK HACK - 0 length string is probably the end of this substream
                     // lets just give up now
-                    while(!iter.atEnd())
-                        iter.readChar();
+                    while(!_iter->atEnd())
+                        _iter->readChar();
                     return;
                 }
             }
             break;
             case EDict:
             {
-                unsigned int len = getLen(iter);
+                unsigned int len = getLen();
                 SDict* dict = new SDict(len * 2); // key & val
                 stream->addMember(dict);
-                parse(dict, iter, len * 2);
+                parse(dict, len * 2);
             }
             break;
             case ETuple2:
             case ETuple:
             {
-                unsigned int len = getLen(iter);
+                unsigned int len = getLen();
                 STuple* tuple = new STuple(len);
                 stream->addMember(tuple);
-                parse(tuple, iter, len);
+                parse(tuple, len);
 
             }
             break;
@@ -616,7 +616,7 @@ namespace EveCache {
             {
                 STuple* tuple = new STuple(2);
                 stream->addMember(tuple);
-                parse(tuple, iter, 2);
+                parse(tuple, 2);
 
             }
             break;
@@ -625,7 +625,7 @@ namespace EveCache {
             {
                 STuple* tuple = new STuple(1);
                 stream->addMember(tuple);
-                parse(tuple, iter, 1);
+                parse(tuple, 1);
 
             }
             break;
@@ -638,7 +638,7 @@ namespace EveCache {
             break;
             case EMarker:
             {
-                unsigned int t = getLen(iter);
+                unsigned int t = getLen();
                 stream->addMember(new SMarker(t));
             }
             break;
@@ -646,37 +646,41 @@ namespace EveCache {
             {
                 SObject *obj = new SObject();
                 stream->addMember(obj);
-                parse(obj, iter, 2);
+                parse(obj, 2);
             }
             break;
             case EDBHeader:
             {
                 SNode *obj = new SDBHeader();
                 stream->addMember(obj);
-                parse(obj, iter, 1);
+                parse(obj, 1);
 
             }
             break;
             case ESubstream:
             {
-                unsigned int len = getLen(iter);
-                char sig = iter.readChar(); // 0x7e
-
-                assert(sig == 0x7e);
-                CacheFile_Iterator iter_sub(iter);
+                unsigned int len = getLen();
+                //char sig = _iter->readChar(); // 0x7e
+                //assert(sig == 0x7e);
+                CacheFile_Iterator iter_sub(*_iter);
                 iter_sub.setLimit(len);
                 SSubstream *ss = new SSubstream(len);
                 stream->addMember(ss);
-                parse(ss, iter_sub, -1);
-                iter.seek(iter_sub.position());
+		Parser *sp = new Parser(&iter_sub);
+		sp->parse();
+                for (int i = 0; i < sp->streams().size(); i++) {
+                    ss->addMember(sp->streams()[i]);
+		}
+                //throw ParseException("TODO: spawn new parser here");
+                _iter->seek(iter_sub.position());
             }
             break;
             case ECompressedRow:
             {
-                iter.readChar(); // Datatype 0x1b - special magic id?
-                int magic = iter.readChar();  // Data for 0x1b
-                unsigned int len = getLen(iter);
-                std::string compdata = iter.readString(len);
+                _iter->readChar(); // Datatype 0x1b - special magic id?
+                int magic = _iter->readChar();  // Data for 0x1b
+                unsigned int len = getLen();
+                std::string compdata = _iter->readString(len);
 
                 const unsigned char* olddata = reinterpret_cast<const unsigned char*>
                     (compdata.c_str());
@@ -692,20 +696,20 @@ namespace EveCache {
             {
                 SDBRecords* rec = new SDBRecords();
                 stream->addMember(rec);
-                parse(rec, iter, -1);
+                parse(rec, -1);
             }
             break;
             case EStreamIdent:
             {
-                unsigned int id = getLen(iter);
+                unsigned int id = getLen();
                 stream->addMember(new SStreamIdent(id));
             }
             break;
             case 0x2d:
             {
-                if(iter.readChar() != 0x2d) {
+                if(_iter->readChar() != 0x2d) {
                     std::stringstream msg;
-                    msg << "Didn't encounter a double 0x2d where I thought there should be one at " << iter.position();
+                    msg << "Didn't encounter a double 0x2d where I thought there should be one at " << _iter->position();
                     throw ParseException(msg.str());
                 }
                 if (lastDbRow)
@@ -716,16 +720,16 @@ namespace EveCache {
                 break;
             default:
             {
-                if (iter.limit() == 0xa && check == 0x0)
+                if (_iter->limit() == 0xa && check == 0x0)
                 {
-                    while(!iter.atEnd())
-                        iter.readChar();
+                    while(!_iter->atEnd())
+                        _iter->readChar();
                     // HACK HACK - valid end of file, in bizarro CCP land?
                     return;
                 }
                 std::stringstream msg;
                 msg << "Can't identify type 0x" << std::hex << static_cast<unsigned int>(check)
-                    << " at position 0x" << iter.position() << " limit " << iter.limit();
+                    << " at position 0x" << _iter->position() << " limit " << _iter->limit();
                 throw ParseException(msg.str());
             }
             }
@@ -734,20 +738,21 @@ namespace EveCache {
 
     }
 
-    void Parser::parse(CacheFile_Iterator& iter)
+    void Parser::parse()
     {
 
         try {
-            while(!iter.atEnd()) {
-                char check = iter.readChar();
+            while(!_iter->atEnd()) {
+                char check = _iter->readChar();
                 SNode* stream = new SNode(EStreamStart);
 
                 if (check != EStreamStart)
                     throw ParseException("No stream start detected...");
 
-                unsigned int len = iter.readInt(); // a hack?
+                unsigned int len = _iter->readInt(); // a hack?
+		// TODO: sharedmap loading goes here
                 _streams.push_back(stream);
-                parse(stream, iter, -1); // -1 = not sure how long this will be
+                parse(stream, -1); // -1 = not sure how long this will be
 
             }
         } catch (EndOfFileException &e) {
@@ -755,11 +760,11 @@ namespace EveCache {
         }
     }
 
-    int Parser::getLen(CacheFile_Iterator& iter)
+    int Parser::getLen()
     {
-        unsigned int len = iter.readChar();
+        unsigned int len = _iter->readChar();
         if ((len & 0xff) == 0xFF)
-            len = iter.readInt();
+            len = _iter->readInt();
         return len;
     }
 

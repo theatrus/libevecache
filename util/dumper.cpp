@@ -74,17 +74,17 @@ int main(int argc, char** argv)
         cF.readFile();
         std::cout << "File length is " << cF.getLength() << " bytes " << std::endl;
         CacheFile_Iterator i = cF.begin();
-        Parser parser;
+        Parser *parser = new Parser(&i);
         try {
-            parser.parse(i);
+            parser->parse();
         } catch (ParseException e) {
             std::cout << "Parse exception " << static_cast<std::string>(e) << std::endl;
         }
 
 
         // TODO; more than one stream
-        for (int i = 0; i < parser.streams().size(); i++) {
-            const std::vector<SNode*>& streams = parser.streams()[i]->members();
+        for (int i = 0; i < parser->streams().size(); i++) {
+            const std::vector<SNode*>& streams = parser->streams()[i]->members();
             std::cout << "Beginning dump..." << std::endl;
             dump(streams, 0);
         }
