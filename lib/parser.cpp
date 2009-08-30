@@ -237,7 +237,7 @@ namespace EveCache {
     std::string SMarker::string() const
     {
         std::string name = ColumnLookup::lookupName(id());
-        if (name.empty()) 
+        if (name.empty())
         {
             std::stringstream ss;
             ss << "UNKNOWN:" << static_cast<unsigned int>(id());
@@ -350,10 +350,15 @@ namespace EveCache {
 
     std::string SObject::name() const
     {
-        SString *cur = (SString *)this;
+        const SNode *cur = this;
         while (cur->members().size())
-            cur = (SString *)cur->members()[0];
-        return cur->string();
+            cur = static_cast<SNode*>(cur->members()[0]);
+
+        const SString *str = dynamic_cast<const SString*>(cur);
+
+        if (str != NULL)
+            return str->string();
+        return std::string("");
     }
 
     std::string SObject::repl() const
@@ -432,7 +437,7 @@ namespace EveCache {
 
 /***********************************************************************/
 
-    Parser::Parser(CacheFile_Iterator *iter) 
+    Parser::Parser(CacheFile_Iterator *iter)
         : _iter(iter), _sharecursor(0)
     {
     }
@@ -791,12 +796,12 @@ namespace EveCache {
 
         SDict *dict = new SDict(999999); // TODO: need dynamic sized dict
         int step = 1;
-        while (step < 6) 
+        while (step < 6)
         {
             std::vector<SNode*>::const_iterator vi = fields->members().begin();
 
             for (; vi != fields->members().end(); ++vi)
-            {   
+            {
                 SNode *fn = (*vi)->members()[0];
                 SInt *ft = (SInt*)(*vi)->members()[1];
                 int fti = ft->value();
@@ -876,7 +881,7 @@ namespace EveCache {
             }
 
             step++;
-            
+
         }
 
 
@@ -895,7 +900,7 @@ namespace EveCache {
         unsigned int shareskip = 0;
         if (shares) {
             _sharemap = new unsigned int[shares];
-            _shareobj = new SNode*[shares+1]; // dont ask ... 
+            _shareobj = new SNode*[shares+1]; // dont ask ...
 
             shareskip = 4 * shares;
             unsigned int opos = _iter->position();
