@@ -25,6 +25,7 @@
 #include <iostream>
 #include <cstring>
 #include <assert.h>
+#include <vector>
 
 namespace EveCache {
 
@@ -32,6 +33,25 @@ namespace EveCache {
                                                          filename(filename)
     {
 
+    }
+
+    CacheFile::CacheFile(std::vector<unsigned char> &buf)
+    {
+        length = buf.size()+16; // TODO: unugly padding
+        contents = new unsigned char[length];
+        unsigned char *cur = contents;
+        std::vector<unsigned char>::iterator i = buf.begin();
+        for (; i != buf.end(); ++i) 
+        { 
+            *cur = *i; 
+            cur++;
+        }
+        while (cur < contents+length) { // TODO ... need "virtual" 0 at end of buffer?
+            *cur = 0;
+            cur++;
+        }
+
+        valid = true;
     }
 
     CacheFile::CacheFile(const CacheFile&rhs) : length(rhs.length), valid(rhs.valid),
@@ -74,12 +94,12 @@ namespace EveCache {
 
     CacheFile_Iterator CacheFile::begin() const
     {
-        return CacheFile_Iterator(this, 0, getLength() - 1);
+        return CacheFile_Iterator(this, 0, getLength());
     }
 
     CacheFile_Iterator CacheFile::end() const
     {
-        return CacheFile_Iterator(this, length, getLength() - 1);
+        return CacheFile_Iterator(this, length, getLength());
     }
 
     unsigned char CacheFile::byteAt(int pos) const
