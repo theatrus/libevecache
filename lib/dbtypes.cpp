@@ -21,6 +21,9 @@ namespace EveCache {
     {
         if (ColumnLookup::isInit == true)
             return;
+        insert("header", 36);
+        insert("jumps", 41);
+        insert("typeID", 74);
         insert("bid", 116);
         insert("duration", 126);
         insert("issued", 131);
@@ -30,12 +33,11 @@ namespace EveCache {
         insert("price", 139);
         insert("range", 140);
         insert("regionID", 141);
+        insert("regionID", 142); // no, i dont know why there are two of them
         insert("solarSystemID", 150);
         insert("stationID", 155);
         insert("volEntered", 160);
         insert("volRemain", 161);
-        insert("jumps", 41);
-        insert("typeID", 74);
         ColumnLookup::isInit = true;
     }
 
