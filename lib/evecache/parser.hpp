@@ -25,6 +25,7 @@
 #include <string>
 
 #include "evecache/config.hpp"
+#include "evecache/dbtypes.hpp"
 
 namespace EveCache {
 
@@ -150,11 +151,12 @@ namespace EveCache {
 
     class EVECACHE_API SMarker : public SNode {
     public:
-        SMarker(char id);
-        virtual char id() const;
+        SMarker(unsigned char id);
+        virtual unsigned char id() const;
+        virtual std::string string() const;
         virtual std::string repl() const;
     protected:
-        char _id;
+        unsigned char _id;
     };
 
 /***********************************************************************/

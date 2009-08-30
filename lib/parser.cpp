@@ -228,20 +228,32 @@ namespace EveCache {
 /***********************************************************************/
 
 
-    SMarker::SMarker(char i) : SNode(EMarker), _id(i)
+    SMarker::SMarker(unsigned char i) : SNode(EMarker), _id(i)
     {
     }
 
     std::string SMarker::repl() const
     {
         std::stringstream ss;
-        ss << " <SMarker ID: " << static_cast<int>(id()) << " > ";
+        ss << " <SMarker ID: " << static_cast<unsigned int>(id()) << " '" << string() << "' > ";
         return ss.str();
     }
 
-    char SMarker::id() const
+    unsigned char SMarker::id() const
     {
         return _id;
+    }
+
+    std::string SMarker::string() const
+    {
+        std::string name = ColumnLookup::lookupName(id());
+	if (name.empty()) 
+	{
+            std::stringstream ss;
+	    ss << "UNKNOWN:" << static_cast<unsigned int>(id());
+            return ss.str();
+        } else
+            return name;
     }
 
 /***********************************************************************/
@@ -626,7 +638,7 @@ namespace EveCache {
             break;
             case EMarker:
             {
-                char t = iter.readChar();
+                unsigned int t = getLen(iter);
                 stream->addMember(new SMarker(t));
             }
             break;
