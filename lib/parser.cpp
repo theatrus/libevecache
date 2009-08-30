@@ -909,6 +909,7 @@ namespace EveCache {
             _iter->seek(opos);
             _iter->setLimit(olim - shareskip);
         }
+        _sharecount = shares;
         return shares;
     }
 
