@@ -64,7 +64,7 @@ namespace EveCache {
         EDBHeader = 0x22, // a database header field of some variety
         ECompressedRow = 0x2a, // the datatype from hell, a RLEish compressed row
         EDBRecords = 0x23, // another datatype containing ECompressedRows/DBRows
-        EStreamIdent = 0x1b, // one byte identifier,
+        ESharedObj = 0x1b, // shared object reference
     } EStreamCode;
 
 
@@ -259,16 +259,6 @@ namespace EveCache {
 
 /***********************************************************************/
 
-    class EVECACHE_API SStreamIdent : public SNode {
-    public:
-        SStreamIdent(int magic);
-        virtual std::string repl() const;
-    private:
-        int _id;
-    };
-
-
-/***********************************************************************/
     class EVECACHE_API Parser {
     public:
         Parser::Parser(CacheFile_Iterator *iter);
@@ -278,9 +268,17 @@ namespace EveCache {
     protected:
         void parse(SNode* node, int limit);
         int getLen();
+        unsigned int shareInit();
+        void shareAdd(SNode* obj);
+        SNode* shareGet(unsigned int id);
+        void shareSkip();
     private:
         std::vector<SNode*> _streams;
 	CacheFile_Iterator *_iter;
+	unsigned int _sharecount;   // number of shared obj
+	unsigned int _sharecursor;  // current index into 
+	unsigned int *_sharemap;    // list of slot mappings
+	SNode **_shareobj;          // list of already discovered shareds
     };
 
 

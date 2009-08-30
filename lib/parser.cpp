@@ -247,10 +247,10 @@ namespace EveCache {
     std::string SMarker::string() const
     {
         std::string name = ColumnLookup::lookupName(id());
-	if (name.empty()) 
-	{
+    if (name.empty()) 
+    {
             std::stringstream ss;
-	    ss << "UNKNOWN:" << static_cast<unsigned int>(id());
+        ss << "UNKNOWN:" << static_cast<unsigned int>(id());
             return ss.str();
         } else
             return name;
@@ -447,24 +447,8 @@ namespace EveCache {
 
 /***********************************************************************/
 
-    SStreamIdent::SStreamIdent(int magic)
-        : SNode(EStreamIdent), _id(magic)
-    {
-    }
-
-    std::string SStreamIdent::repl() const
-    {
-        std::stringstream ss;
-        ss << " <SStreamIdent " << _id << "> ";
-        return ss.str();
-    }
-
-
-
-/***********************************************************************/
-
     Parser::Parser(CacheFile_Iterator *iter) 
-        : _iter(iter)
+        : _iter(iter), _sharecursor(0)
     {
     }
 
@@ -476,16 +460,25 @@ namespace EveCache {
             delete *i;
         }
         _streams.clear();
+
+        if (_shareobj != 0)
+            delete _shareobj;
+        if (_sharemap != 0)
+            delete _sharemap;
     }
 
     void Parser::parse(SNode* stream, int limit)
     {
         char check;
+        char isshared = 0;
+        SNode *thisobj = NULL;
         SDBRow *lastDbRow = NULL;
         while (!_iter->atEnd() && limit != 0)
         {
             try {
-                check = _iter->readChar() & 0x3f; // magic
+                char type = _iter->readChar();
+                check = type & 0x3f;
+                isshared = type & 0x40;
             } catch (EndOfFileException &e) {
                 return;
             }
@@ -493,88 +486,88 @@ namespace EveCache {
             switch(check) {
             case ENone:
             {
-                stream->addMember(new SNone());
+                thisobj = new SNone();
             }
             break;
             case EReal:
             {
                 double val = _iter->readDouble();
-                stream->addMember(new SReal(val));
+                thisobj = new SReal(val);
             }
             break;
             case E0Real:
             {
-                stream->addMember(new SReal(0));
+                thisobj = new SReal(0);
             }
             break;
             case EInteger:
             {
                 unsigned int val = _iter->readInt();
-                stream->addMember(new SInt(val));
+                thisobj = new SInt(val);
             }
             break;
             case EBoolFalse:
             case E0Integer:
             {
-                stream->addMember(new SInt(0));
+                thisobj = new SInt(0);
             }
             break;
             case EBoolTrue: /* Replace with a real Bool node one day */
             case E1Integer:
             {
-                stream->addMember(new SInt(1));
+                thisobj = new SInt(1);
             }
             break;
             case ENeg1Integer:
             {
-                stream->addMember(new SInt(-1));
+                thisobj = new SInt(-1);
             };
             break;
             case ELongLong:
             {
                 long long val = _iter->readLongLong();
-                stream->addMember(new SLongLong(val));
+                thisobj = new SLongLong(val);
             }
             break;
             case EShort:
             {
                 int i = _iter->readShort();
-                stream->addMember(new SInt(i));
+                thisobj = new SInt(i);
             }
             break;
             case EByte:
             {
                 int i = _iter->readChar();
-                stream->addMember(new SInt(i));
+                thisobj = new SInt(i);
             }
             break;
             case ESizedInt:
             {
                 unsigned char len = _iter->readChar();
                 if (len == 8)
-                    stream->addMember(new SLongLong(_iter->readLongLong()));
+                    thisobj = new SLongLong(_iter->readLongLong());
                 else if (len == 4)
-                    stream->addMember(new SInt(_iter->readInt())); // not observed
+                    thisobj = new SInt(_iter->readInt()); // not observed
                 else if (len == 2)
-                    stream->addMember(new SInt(_iter->readShort())); // not observed
+                    thisobj = new SInt(_iter->readShort()); // not observed
             }
             break;
             case EIdent:
             {
                 unsigned int len = getLen();
                 std::string data = _iter->readString(len);
-                stream->addMember(new SIdent(data));
+                thisobj = new SIdent(data);
             }
             break;
             case EEmptyString:
             {
-                stream->addMember(new SString(""));
+                thisobj = new SString("");
             }
             break;
             case EString3:
             {
                 std::string data = _iter->readString(1);
-                stream->addMember(new SString(data));
+                thisobj = new SString(data);
             }
             break;
             case EUnicodeString:
@@ -583,7 +576,7 @@ namespace EveCache {
             {
                 int len = _iter->readChar();
                 std::string data = _iter->readString(len);
-                stream->addMember(new SString(data));
+                thisobj = new SString(data);
 
                 if (len == 0 && (_iter->limit() - _iter->position()) <= 0xf) {
                     // HACK HACK HACK - 0 length string is probably the end of this substream
@@ -598,7 +591,7 @@ namespace EveCache {
             {
                 unsigned int len = getLen();
                 SDict* dict = new SDict(len * 2); // key & val
-                stream->addMember(dict);
+                thisobj = dict;
                 parse(dict, len * 2);
             }
             break;
@@ -606,53 +599,49 @@ namespace EveCache {
             case ETuple:
             {
                 unsigned int len = getLen();
-                STuple* tuple = new STuple(len);
-                stream->addMember(tuple);
-                parse(tuple, len);
+                thisobj = new STuple(len);
+                parse(thisobj, len);
 
             }
             break;
             case E2Tuple:
             {
-                STuple* tuple = new STuple(2);
-                stream->addMember(tuple);
-                parse(tuple, 2);
+                thisobj = new STuple(2);
+                parse(thisobj, 2);
 
             }
             break;
             case E1Tuple2:
             case E1Tuple:
             {
-                STuple* tuple = new STuple(1);
-                stream->addMember(tuple);
-                parse(tuple, 1);
+                thisobj = new STuple(1);
+                parse(thisobj, 1);
 
             }
             break;
             case E0Tuple2:
             case E0Tuple:
             {
-                STuple* tuple = new STuple(0);
-                stream->addMember(tuple);
+                thisobj = new STuple(0);
             }
             break;
             case EMarker:
             {
                 unsigned int t = getLen();
-                stream->addMember(new SMarker(t));
+                thisobj = new SMarker(t);
             }
             break;
             case EObject:
             {
                 SObject *obj = new SObject();
-                stream->addMember(obj);
+                thisobj = obj;
                 parse(obj, 2);
             }
             break;
             case EDBHeader:
             {
                 SNode *obj = new SDBHeader();
-                stream->addMember(obj);
+                thisobj = obj;
                 parse(obj, 1);
 
             }
@@ -665,12 +654,12 @@ namespace EveCache {
                 CacheFile_Iterator iter_sub(*_iter);
                 iter_sub.setLimit(len);
                 SSubstream *ss = new SSubstream(len);
-                stream->addMember(ss);
-		Parser *sp = new Parser(&iter_sub);
-		sp->parse();
+                thisobj = ss;
+                Parser *sp = new Parser(&iter_sub);
+                sp->parse();
                 for (int i = 0; i < sp->streams().size(); i++) {
                     ss->addMember(sp->streams()[i]);
-		}
+                }
                 //throw ParseException("TODO: spawn new parser here");
                 _iter->seek(iter_sub.position());
             }
@@ -688,21 +677,21 @@ namespace EveCache {
                 std::vector<unsigned char> newdata;
                 rle_unpack(olddata, len, newdata);
                 lastDbRow = new SDBRow(magic, newdata);
-                stream->addMember(lastDbRow);
+                thisobj = lastDbRow;
 
             }
             break;
             case EDBRecords:
             {
                 SDBRecords* rec = new SDBRecords();
-                stream->addMember(rec);
+                thisobj = rec;
                 parse(rec, -1);
             }
             break;
-            case EStreamIdent:
+            case ESharedObj:
             {
                 unsigned int id = getLen();
-                stream->addMember(new SStreamIdent(id));
+                thisobj = shareGet(id);
             }
             break;
             case 0x2d:
@@ -734,6 +723,18 @@ namespace EveCache {
             }
             }
             limit -= 1;
+
+            if (!thisobj) {
+                throw ParseException("no thisobj");
+            }
+            stream->addMember(thisobj);
+
+            if (isshared) {
+                if (!thisobj) {
+                    throw ParseException("shared flag but no obj");
+                }
+                shareAdd(thisobj);
+            }
         }
 
     }
@@ -749,15 +750,69 @@ namespace EveCache {
                 if (check != EStreamStart)
                     throw ParseException("No stream start detected...");
 
-                unsigned int len = _iter->readInt(); // a hack?
-		// TODO: sharedmap loading goes here
+                shareInit();
                 _streams.push_back(stream);
                 parse(stream, -1); // -1 = not sure how long this will be
 
+                shareSkip();
             }
         } catch (EndOfFileException &e) {
             // Ignore the exception, parser has run amok!
         }
+    }
+
+    unsigned int Parser::shareInit()
+    {
+        unsigned int shares = _iter->readInt();
+        unsigned int shareskip = 0;
+        if (shares) {
+            _sharemap = new unsigned int[shares];
+            _shareobj = new SNode*[shares+1]; // dont ask ... 
+
+            shareskip = 4 * shares;
+            unsigned int opos = _iter->position();
+            unsigned int olim = _iter->limit();
+            _iter->seek(opos + olim - shareskip);
+            unsigned int i;
+            for (i=0; i < shares; i++) {
+                _sharemap[i] = _iter->readInt();
+            }
+            _iter->seek(opos);
+            _iter->setLimit(olim - shareskip);
+        }
+        return shares;
+    }
+
+    void Parser::shareAdd(SNode *obj)
+    {
+        if (_sharecursor >= _sharecount)
+            throw ParseException("cursor out of range");
+        unsigned int shareid = _sharemap[_sharecursor];
+        if (shareid > _sharecount)
+            throw ParseException("shareid out of range");
+
+// TODO: how do i check the slot is empty?
+//        if (_shareobj[shareid])
+//            throw ParseException("already have obj");
+        _shareobj[shareid] = obj;
+
+//std::cerr << "DEB: share add, cursor " << _sharecursor << ", id " << shareid << ", obj " << obj << std::endl;
+        _sharecursor++;
+    }
+
+    SNode* Parser::shareGet(unsigned int id)
+    {
+        if (id > _sharecount)
+            throw ParseException("id out of range");
+
+// TODO: how do i check if it exists?
+//std::cerr << "DEB: share get, id " << id << ", obj " << _shareobj[id] << std::endl;
+        return _shareobj[id];
+    }
+
+    void Parser::shareSkip()
+    {
+        _iter->advance(_sharecount*4);
     }
 
     int Parser::getLen()
