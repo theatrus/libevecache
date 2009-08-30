@@ -271,7 +271,7 @@ namespace EveCache {
 /***********************************************************************/
     class EVECACHE_API Parser {
     public:
-        Parser::Parser(CacheFile_Iterator *iter);
+        Parser(CacheFile_Iterator *iter);
         ~Parser();
         void parse();
         std::vector<SNode*> streams() const;
@@ -280,7 +280,7 @@ namespace EveCache {
         int getLen();
     private:
         std::vector<SNode*> _streams;
-	CacheFile_Iterator *_iter;
+        CacheFile_Iterator *_iter;
     };
 
 
