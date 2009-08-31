@@ -57,7 +57,7 @@ namespace EveCache {
         tmp = gmtime(&t);
 
         char times[200];
-        strftime(times, 200, "%Y-%m-%d %T", tmp);
+        strftime(times, 200, "%Y-%m-%d %H:%M:%S", tmp);
 
 
         ss << "," << times << ".000";
