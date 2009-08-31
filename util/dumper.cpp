@@ -87,7 +87,7 @@ void market(const SNode* node)
 
 int main(int argc, char** argv)
 {
-    std::cout << "Cache File Dumper " << std::endl;
+    std::cerr << "Cache File Dumper " << std::endl;
     if (argc < 2) {
         std::cerr << "Error: Syntax: " << argv[0] << " [options] [filename]" << std::endl;
         return -1;
@@ -110,7 +110,7 @@ int main(int argc, char** argv)
     }
 
 
-    std::cout << "File: " << argv[argc-1] << std::endl;
+    std::cerr << "File: " << argv[argc-1] << std::endl;
     {
         std::string fileName(argv[argc-1]);
         CacheFile cF(fileName);
@@ -118,6 +118,7 @@ int main(int argc, char** argv)
         std::cerr << "File length is " << cF.getLength() << " bytes " << std::endl;
         CacheFile_Iterator i = cF.begin();
         Parser *parser = new Parser(&i);
+
         try {
             parser->parse();
         } catch (ParseException e) {
