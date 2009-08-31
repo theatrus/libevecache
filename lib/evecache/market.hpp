@@ -22,6 +22,8 @@
 #ifndef _EC_MARKET_H_
 #define _EC_MARKET_H_
 
+#include "evecache/config.hpp"
+
 #include <vector>
 #include <string>
 
@@ -33,7 +35,7 @@ namespace EveCache {
     /**
      * Domain object for a market order
      */
-    class MarketOrder {
+    class EVECACHE_API MarketOrder {
     public:
 
         MarketOrder() {}
@@ -102,7 +104,7 @@ namespace EveCache {
     };
 
 
-    class MarketList {
+    class EVECACHE_API MarketList {
     public:
         MarketList(int type, int region);
         MarketList();
@@ -133,7 +135,7 @@ namespace EveCache {
     };
 
 
-    class MarketParser {
+    class EVECACHE_API MarketParser {
     public:
         MarketParser(const SNode *stream);
         ~MarketParser();
