@@ -26,6 +26,9 @@
 
 namespace EveCache {
 
+
+    class SNode;
+
     /**
      * Domain object for a market order
      */
@@ -80,6 +83,7 @@ namespace EveCache {
     class MarketList {
     public:
         MarketList(int type, int region);
+        MarketList();
         int type() const { return _type; }
         int region() const { return _region; }
         void addOrder(MarketOrder& order);
@@ -91,6 +95,17 @@ namespace EveCache {
         std::vector<MarketOrder> _buyOrders;
     };
 
+
+    class MarketParser {
+    public:
+        MarketParser(const SNode *stream);
+        ~MarketParser();
+        MarketList getList() const;
+        void parse();
+    private:
+        MarketList _list;
+        const SNode *_stream;
+    };
 
 
 };

@@ -21,9 +21,15 @@
 
 
 #include "evecache/market.hpp"
+#include "evecache/parser.hpp"
+#include "evecache/exceptions.hpp"
 
 namespace EveCache {
     MarketList::MarketList(int type, int region) : _type(type), _region(region)
+    {
+    }
+
+    MarketList::MarketList() : _type(0), _region(0)
     {
     }
 
@@ -33,5 +39,27 @@ namespace EveCache {
             _buyOrders.push_back(order);
         else
             _sellOrders.push_back(order);
+    }
+
+
+    MarketParser::MarketParser(const SNode* stream) : _stream(stream)
+    {
+
+    }
+
+    MarketParser::~MarketParser()
+    {
+    }
+
+    void MarketParser::parse()
+    {
+        /* Step 1: Determine if this is a market order file */
+        SNode *base = _stream->members()[0];
+        SIdent *id = dynamic_cast<SIdent*>(base->members()[0]->members()[1]);
+    }
+
+    MarketList MarketParser::getList() const
+    {
+        return _list;
     }
 };

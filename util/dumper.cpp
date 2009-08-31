@@ -20,9 +20,11 @@
 
 #include "evecache/reader.hpp"
 #include "evecache/parser.hpp"
+#include "evecache/market.hpp"
 #include "evecache/exceptions.hpp"
 
 #include <iostream>
+#include <cstring>
 
 // Yes I'm lazy
 using namespace EveCache;
@@ -60,16 +62,41 @@ void dump(const std::vector<SNode*>& stream, int level)
 
 }
 
+
+void market(const SNode* node)
+{
+    MarketParser mp(node);
+    mp.parse();
+}
+
 int main(int argc, char** argv)
 {
     std::cout << "Cache File Dumper " << std::endl;
     if (argc < 2) {
-        std::cerr << "Error: Syntax: " << argv[0] << " [filename]" << std::endl;
+        std::cerr << "Error: Syntax: " << argv[0] << " [options] [filename]" << std::endl;
         return -1;
     }
-    std::cout << "File: " << argv[1] << std::endl;
+    bool dumpStructure = false;
+    bool dumpMarket = false;
+    // Parse options in simple mode
+    if (argc > 2) {
+        for (int i = 1; i < argc - 2; i++)
+        {
+            if (strcmp(argv[i], "--market") == 0) {
+                dumpMarket = true;
+            }
+            if (strcmp(argv[i], "--structure") == 0) {
+                dumpStructure = true;
+            }
+        }
+    } else {
+        dumpStructure = true; // default
+    }
+
+
+    std::cout << "File: " << argv[argc-1] << std::endl;
     {
-        std::string fileName(argv[1]);
+        std::string fileName(argv[argc-1]);
         CacheFile cF(fileName);
         cF.readFile();
         std::cout << "File length is " << cF.getLength() << " bytes " << std::endl;
@@ -81,12 +108,22 @@ int main(int argc, char** argv)
             std::cout << "Parse exception " << static_cast<std::string>(e) << std::endl;
         }
 
+        if (dumpStructure) {
+            // TODO; more than one stream
+            for (int i = 0; i < parser->streams().size(); i++) {
+                const std::vector<SNode*>& streams = parser->streams()[i]->members();
+                std::cout << "Beginning dump..." << std::endl;
+                dump(streams, 0);
+            }
+        }
+        if (dumpMarket) {
+            std::cout << "MARKET INFORMATION" << std::endl;
+            for (int i = 0; i < parser->streams().size(); i++) {
+                const SNode* snode = parser->streams()[i];
+                std::cout << "Beginning dump..." << std::endl;
+                market(snode);
+            }
 
-        // TODO; more than one stream
-        for (int i = 0; i < parser->streams().size(); i++) {
-            const std::vector<SNode*>& streams = parser->streams()[i]->members();
-            std::cout << "Beginning dump..." << std::endl;
-            dump(streams, 0);
         }
     }
     std::cout << std::endl;
