@@ -67,6 +67,8 @@ void market(const SNode* node)
 {
     MarketParser mp(node);
     mp.parse();
+    MarketList list = mp.getList();
+    std::cout << "MarketList for region " << list.region() << " and type " << list.type() << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -80,7 +82,7 @@ int main(int argc, char** argv)
     bool dumpMarket = false;
     // Parse options in simple mode
     if (argc > 2) {
-        for (int i = 1; i < argc - 2; i++)
+        for (int i = 1; i < argc - 1; i++)
         {
             if (strcmp(argv[i], "--market") == 0) {
                 dumpMarket = true;

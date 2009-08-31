@@ -821,7 +821,7 @@ namespace EveCache {
                     case 6: if (step == 1) // currency
                     {
                         long long val = blob.readLongLong();
-                        obj = new SReal(val/10000);
+                        obj = new SLongLong(val);
                     }
                     break;
                     case 64: if (step == 1) // timestamp
