@@ -106,8 +106,8 @@ namespace EveCache {
 
     class EVECACHE_API SDBHeader : public SNode {
     public:
-        SDBHeader();
-        virtual std::string repl() const;
+        SDBHeader() : SNode(ECompressedRow) {};
+        virtual std::string repl() const { return std::string(""); };
     };
 
 
@@ -254,8 +254,8 @@ namespace EveCache {
 
     class EVECACHE_API SDBRecords : public SNode {
     public:
-        SDBRecords();
-        virtual std::string repl() const;
+        SDBRecords() : SNode(ECompressedRow) {};
+        virtual std::string repl() const { return std::string(""); } ;
     };
 
 /***********************************************************************/
