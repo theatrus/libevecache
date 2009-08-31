@@ -3,8 +3,8 @@ env = Environment(CPPPATH = ['lib/'])
 platform = ARGUMENTS.get('OS', Platform())
 
 if platform.name == "win32":
-   lenv.Append(CPPFLAGS=["/EHsc", "/MD"])
-   env.Append(CPPFLAGS=["/EHsc", "/MD"])
+   lenv.Append(CPPFLAGS=["/EHsc", "/MD", "/O2", "/GF", "/GL", "/GR", "/arch:SSE"])
+   env.Append(CPPFLAGS=["/EHsc", "/MD", "/O2", "/GF", "/GL", "/GR", "/arch:SSE"])
    lenv.Append(CPPDEFINES=["EVECACHE_EXPORT", "WIN32"])
    env.Append(CPPDEFINES=["WIN32"])
 else:
