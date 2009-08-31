@@ -46,3 +46,11 @@ stringstream.
 
 For examples of how to use the library in the absense of other
 documents, refer to the dumper utility located in "util/".
+
+
+Support
+=======
+
+E-mail  : atrus at stackworks.net
+IRC     : #eve-dev on irc.coldfont.net
+Code    : http://gitorious.org/libevecache
