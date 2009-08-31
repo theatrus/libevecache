@@ -21,12 +21,54 @@
 
 
 #include "evecache/market.hpp"
+#include "evecache/dbtypes.hpp"
 #include "evecache/parser.hpp"
 #include "evecache/exceptions.hpp"
 
 #include <iostream>
+#include <string>
+#include <sstream>
+
+#include <time.h>
 
 namespace EveCache {
+
+
+    std::string MarketOrder::toCsv() const
+    {
+        std::stringstream ss;
+        ss << (price() / 10000) << "." << ((price() - ((price() / 10000)*10000)) / 100);
+        ss << "," << volRemaining();
+        ss << "," << type();
+        ss << "," << range();
+        ss << "," << orderID();
+        ss << "," << volEntered();
+        ss << "," << minVolume();
+
+        if (isBid())
+            ss << "," << "True";
+        else
+            ss << "," << "False";
+
+
+        time_t t = windows_to_unix_time(issued());
+        struct tm *tmp;
+
+        tmp = gmtime(&t);
+
+        char times[200];
+        strftime(times, 200, "%Y-%m-%d %T", tmp);
+
+
+        ss << "," << times << ".000";
+        ss << "," << duration();
+        ss << "," << stationID();
+        ss << "," << regionID();
+        ss << "," << solarSystemID();
+        ss << "," << jumps();
+        return ss.str();
+    }
+
     MarketList::MarketList(int type, int region) : _type(type), _region(region)
     {
     }
@@ -69,27 +111,33 @@ namespace EveCache {
 
             SInt* intV = dynamic_cast<SInt*>(value);
             SLongLong* longV = dynamic_cast<SLongLong*>(value);
+            SReal* realV = dynamic_cast<SReal*>(value);
 
             int sintV = 0;
             long long slongV = 0;
+            double srealV = 0.0;
+
             if (longV != NULL)
                 slongV = longV->value();
 
             if (intV != NULL)
                 sintV = intV->value();
 
+            if (realV != NULL)
+                srealV = realV->value();
+
             switch(key->id()) {
             case 139:
                 order.setPrice(slongV);
                 break;
             case 161:
-                order.setVolRemaining(sintV);
+                order.setVolRemaining(srealV);
                 break;
             case 131:
-                order.setIssued(sintV);
+                order.setIssued(slongV);
                 break;
             case 138:
-                order.setOrderID(slongV);
+                order.setOrderID(sintV);
                 break;
             case 160:
                 order.setVolEntered(sintV);
@@ -121,7 +169,10 @@ namespace EveCache {
                 order.setDuration(sintV);
                 break;
             case 116:
-                order.setBid(sintV);
+                if (sintV)
+                    order.setBid(true);
+                else
+                    order.setBid(false);
                 break;
             }
         }

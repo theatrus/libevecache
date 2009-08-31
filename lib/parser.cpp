@@ -827,7 +827,7 @@ namespace EveCache {
                     case 64: if (step == 1) // timestamp
                     {
                         long long val = blob.readLongLong();
-                        obj = new SInt(val);
+                        obj = new SLongLong(val);
                     }
                     break;
                     case 5: if (step == 1) // double
@@ -856,14 +856,15 @@ namespace EveCache {
                     {
                         if (!boolcount) {
                             boolbuf = blob.readChar();
-                            boolcount = 0x80;
+                            //std::cerr << "Boolbuf" << (int)boolbuf << std::endl;
+                            boolcount = 0x1;
                         }
                         if (boolbuf & boolcount) {
                             obj = new SInt(1);
                         } else {
                             obj = new SInt(0);
                         }
-                        boolcount >>= 1;
+                        boolcount <<= 1;
                     }
                     break;
                     default:

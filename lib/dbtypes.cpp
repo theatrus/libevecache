@@ -4,7 +4,7 @@ namespace EveCache {
 
     unsigned long windows_to_unix_time(unsigned long long time)
     {
-        return (time / 10000000LL)-11644473600LL;
+        return ((time / 10000000)-11644473600);
     }
 
     std::map<std::string, unsigned char> ColumnLookup::_idLookup;

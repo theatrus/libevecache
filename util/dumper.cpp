@@ -68,7 +68,21 @@ void market(const SNode* node)
     MarketParser mp(node);
     mp.parse();
     MarketList list = mp.getList();
-    std::cout << "MarketList for region " << list.region() << " and type " << list.type() << std::endl;
+    std::cerr << "MarketList for region " << list.region() << " and type " << list.type() << std::endl;
+    std::cout << "price,volRemaining,typeID,range,orderID,volEntered,minVolume,bid,issued,duration,stationID,regionID,solarSystemID,jumps," << std::endl;
+    std::vector<MarketOrder> buy = list.getBuyOrders();
+    std::vector<MarketOrder> sell = list.getSellOrders();
+    std::vector<MarketOrder>::const_iterator i = sell.begin();
+    for (; i != sell.end(); ++i)
+    {
+        std::cout << (*i).toCsv() << std::endl;
+    }
+    i = buy.begin();
+    for (; i != buy.end(); ++i)
+    {
+        std::cout << (*i).toCsv() << std::endl;
+    }
+
 }
 
 int main(int argc, char** argv)
@@ -101,28 +115,25 @@ int main(int argc, char** argv)
         std::string fileName(argv[argc-1]);
         CacheFile cF(fileName);
         cF.readFile();
-        std::cout << "File length is " << cF.getLength() << " bytes " << std::endl;
+        std::cerr << "File length is " << cF.getLength() << " bytes " << std::endl;
         CacheFile_Iterator i = cF.begin();
         Parser *parser = new Parser(&i);
         try {
             parser->parse();
         } catch (ParseException e) {
-            std::cout << "Parse exception " << static_cast<std::string>(e) << std::endl;
+            std::cerr << "Parse exception " << static_cast<std::string>(e) << std::endl;
         }
 
         if (dumpStructure) {
             // TODO; more than one stream
             for (int i = 0; i < parser->streams().size(); i++) {
                 const std::vector<SNode*>& streams = parser->streams()[i]->members();
-                std::cout << "Beginning dump..." << std::endl;
                 dump(streams, 0);
             }
         }
         if (dumpMarket) {
-            std::cout << "MARKET INFORMATION" << std::endl;
             for (int i = 0; i < parser->streams().size(); i++) {
                 const SNode* snode = parser->streams()[i];
-                std::cout << "Beginning dump..." << std::endl;
                 market(snode);
             }
 

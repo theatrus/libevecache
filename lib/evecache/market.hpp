@@ -23,6 +23,7 @@
 #define _EC_MARKET_H_
 
 #include <vector>
+#include <string>
 
 namespace EveCache {
 
@@ -38,11 +39,20 @@ namespace EveCache {
         MarketOrder() {}
 
         /**
+         * Utility
+         */
+
+        /**
+         * Return this item as a standard CSV file export line
+         */
+        std::string toCsv() const;
+
+        /**
          * Data setters
          */
 
         void setPrice(unsigned long long v) { _price = v; }
-        void setVolRemaining(unsigned int v) { _volRemaining = v; }
+        void setVolRemaining(double v) { _volRemaining = v; }
         void setRange(unsigned int v) { _range = v; }
         void setOrderID(unsigned long long v) { _orderID = v; }
         void setVolEntered(unsigned int v) { _volEntered = v; }
@@ -60,7 +70,7 @@ namespace EveCache {
          * Data accessors
          */
         unsigned long long price() const { return _price; }
-        unsigned int volRemaining() const { return _volRemaining; }
+        double volRemaining() const { return _volRemaining; }
         unsigned int range() const { return _range; }
         unsigned long long orderID() const { return _orderID; }
         unsigned int volEntered() const { return _volEntered; }
@@ -76,7 +86,7 @@ namespace EveCache {
 
     private:
         unsigned long long _price;
-        unsigned int _volRemaining;
+        double _volRemaining;
         unsigned int _range;
         unsigned long long _orderID;
         unsigned int _volEntered;
