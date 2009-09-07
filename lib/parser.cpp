@@ -97,9 +97,19 @@ namespace EveCache {
 
     SNode::SNode(const SNode& rhs)
     {
-        _members = rhs._members;
+        _members.clear();
+        std::vector<SNode*>::const_iterator i = rhs._members.begin();
+        for ( ; i != rhs._members.end(); ++i)
+        {
+            _members.push_back((*i)->clone());
+        }
+        _type = rhs._type;
     }
 
+    SNode* SNode::clone() const
+    {
+        return new SNode(*this);
+    }
 
     SNode::~SNode()
     {
@@ -156,10 +166,38 @@ namespace EveCache {
         return ss.str();
     }
 
+    SStreamNode* SStreamNode::clone() const
+    {
+        return new SStreamNode(*this);
+    }
+
 /***********************************************************************/
+
+    SDBHeader::SDBHeader() : SNode(ECompressedRow)
+    {
+    }
+
+    std::string SDBHeader::repl() const
+    {
+        return std::string("<SDBHeader>");
+    }
+
+
+    SDBHeader* SDBHeader::clone() const
+    {
+        return new SDBHeader(*this);
+    }
+
+/***********************************************************************/
+
 
     STuple::STuple(unsigned int len) : SNode(ETuple), _givenLength(len)
     {
+    }
+
+    STuple::STuple(const STuple &rhs) : SNode(rhs)
+    {
+        _givenLength = rhs._givenLength;
     }
 
     STuple::~STuple()
@@ -185,11 +223,21 @@ namespace EveCache {
         return ss.str();
     }
 
+    STuple* STuple::clone() const
+    {
+        return new STuple(*this);
+    }
+
 
 /***********************************************************************/
 
     SDict::SDict(unsigned int len) : SNode(EDict), _givenLength(len)
     {
+    }
+
+    SDict::SDict(const SDict &rhs) : SNode(rhs)
+    {
+        _givenLength = rhs._givenLength;
     }
 
     SDict::~SDict()
@@ -212,6 +260,11 @@ namespace EveCache {
         std::stringstream ss;
         ss << " <SDict> ";
         return ss.str();
+    }
+
+    SDict* SDict::clone() const
+    {
+        return new SDict(*this);
     }
 
 
@@ -246,6 +299,11 @@ namespace EveCache {
             return name;
     }
 
+    SMarker* SMarker::clone() const
+    {
+        return new SMarker(*this);
+    }
+
 /***********************************************************************/
 
     SIdent::SIdent(const std::string& n) : SNode(EIdent), _name(n)
@@ -265,6 +323,11 @@ namespace EveCache {
     }
 
 
+    SIdent* SIdent::clone() const
+    {
+        return new SIdent(*this);
+    }
+
 /***********************************************************************/
 
     SString::SString(const std::string& n) : SNode(EString), _name(n)
@@ -281,6 +344,11 @@ namespace EveCache {
         std::stringstream ss;
         ss << " <SString '" << string() << "'> ";
         return ss.str();
+    }
+
+    SString* SString::clone() const
+    {
+        return new SString(*this);
     }
 
 
@@ -303,6 +371,11 @@ namespace EveCache {
         return ss.str();
     }
 
+    SInt* SInt::clone() const
+    {
+        return new SInt(*this);
+    }
+
 
 /***********************************************************************/
 
@@ -322,6 +395,11 @@ namespace EveCache {
         return ss.str();
     }
 
+    SReal* SReal::clone() const
+    {
+        return new SReal(*this);
+    }
+
 
 /***********************************************************************/
 
@@ -339,6 +417,11 @@ namespace EveCache {
         std::stringstream ss;
         ss << " <SLongLong '" << value() << "'> ";
         return ss.str();
+    }
+
+    SLongLong* SLongLong::clone() const
+    {
+        return new SLongLong(*this);
     }
 
 
@@ -369,6 +452,10 @@ namespace EveCache {
     }
 
 
+    SObject* SObject::clone() const
+    {
+        return new SObject(*this);
+    }
 
 /***********************************************************************/
 
@@ -382,7 +469,10 @@ namespace EveCache {
         return ss.str();
     }
 
-
+    SNone* SNone::clone() const
+    {
+        return new SNone(*this);
+    }
 
 /***********************************************************************/
 
@@ -395,6 +485,11 @@ namespace EveCache {
         std::stringstream ss;
         ss << " <SSubstream> ";
         return ss.str();
+    }
+
+    SSubstream* SSubstream::clone() const
+    {
+        return new SSubstream(*this);
     }
 
 /***********************************************************************/
@@ -434,6 +529,28 @@ namespace EveCache {
         _last = last;
     }
 
+    SDBRow* SDBRow::clone() const
+    {
+        return new SDBRow(*this);
+    }
+
+
+
+/***********************************************************************/
+
+    SDBRecords::SDBRecords() : SNode(ECompressedRow)
+    {
+    }
+
+    std::string SDBRecords::repl() const
+    {
+        return std::string("");
+    }
+
+    SDBRecords* SDBRecords::clone() const
+    {
+        return new SDBRecords(*this);
+    }
 
 /***********************************************************************/
 
@@ -673,9 +790,10 @@ namespace EveCache {
             Parser *sp = new Parser(&iter_sub);
             sp->parse();
             for (int i = 0; i < sp->streams().size(); i++) {
-                ss->addMember(sp->streams()[i]);
+                ss->addMember(sp->streams()[i]->clone());
             }
-            //throw ParseException("TODO: spawn new parser here");
+            delete sp;
+
             _iter->seek(iter_sub.position());
         }
         break;
@@ -774,7 +892,9 @@ namespace EveCache {
     {
         // get header
         SObject* head = dynamic_cast<SObject*>(parseone());
-//std::cerr << "DBRow: head: " << head << " == " << head->repl() << std::endl;
+        if (head == NULL)
+            throw ParseException("The DBRow header isn't present...");
+
         if (head->name().compare("blue.DBRowDescriptor"))
                 throw ParseException("bad descriptor name");
         STuple* fields = dynamic_cast<STuple*>(head->members()[0]->members()[1]->members()[0]);
@@ -802,7 +922,7 @@ namespace EveCache {
 
             for (; vi != fields->members().end(); ++vi)
             {
-                SNode *fn = (*vi)->members()[0];
+                SNode *fn = (*vi)->members()[0]->clone();
                 SInt *ft = (SInt*)(*vi)->members()[1];
                 int fti = ft->value();
 
@@ -943,7 +1063,7 @@ namespace EveCache {
 
 // TODO: how do i check if it exists?
 //std::cerr << "DEB: share get, id " << id << ", obj " << _shareobj[id] << std::endl;
-        return _shareobj[id];
+        return _shareobj[id]->clone();
     }
 
     void Parser::shareSkip()

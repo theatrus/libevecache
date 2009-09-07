@@ -82,6 +82,7 @@ namespace EveCache {
         virtual void setType(EStreamCode t);
         virtual void addMember(SNode* node);
         virtual const std::vector<SNode*>& members() const;
+        virtual SNode* clone() const;
     private:
         EStreamCode _type;
     protected:
@@ -97,7 +98,7 @@ namespace EveCache {
         SStreamNode(const SStreamNode &rhs);
         virtual ~SStreamNode() { }
         virtual std::string repl() const;
-
+        virtual SStreamNode* clone() const;
     protected:
 
     };
@@ -106,8 +107,9 @@ namespace EveCache {
 
     class EVECACHE_API SDBHeader : public SNode {
     public:
-        SDBHeader() : SNode(ECompressedRow) {};
-        virtual std::string repl() const { return std::string(""); };
+        SDBHeader();
+        virtual std::string repl() const;
+        virtual SDBHeader* clone() const;
     };
 
 
@@ -116,10 +118,12 @@ namespace EveCache {
     class EVECACHE_API STuple : public SNode {
     public:
         STuple(unsigned int len);
+        STuple(const STuple &rhs);
         virtual ~STuple();
         virtual unsigned int givenLength() const;
         virtual void addMember(SNode* node);
         virtual std::string repl() const;
+        virtual STuple* clone() const;
     protected:
         unsigned int _givenLength;
     };
@@ -129,10 +133,12 @@ namespace EveCache {
     class EVECACHE_API SDict : public SNode {
     public:
         SDict(unsigned int len);
+        SDict(const SDict &);
         virtual ~SDict();
         virtual unsigned int givenLength() const;
         virtual void addMember(SNode* node);
         virtual std::string repl() const;
+        virtual SDict* clone() const;
     protected:
         unsigned int _givenLength;
     };
@@ -144,6 +150,7 @@ namespace EveCache {
     public:
         SNone();
         virtual std::string repl() const;
+        virtual SNone* clone() const;
     };
 
 
@@ -155,6 +162,7 @@ namespace EveCache {
         virtual unsigned char id() const;
         virtual std::string string() const;
         virtual std::string repl() const;
+        virtual SMarker* clone() const;
     protected:
         unsigned char _id;
     };
@@ -166,6 +174,7 @@ namespace EveCache {
         SIdent(const std::string& m);
         virtual std::string name() const;
         virtual std::string repl() const;
+        virtual SIdent* clone() const;
     protected:
         std::string _name;
     };
@@ -177,6 +186,7 @@ namespace EveCache {
         SString(const std::string& m);
         virtual std::string string() const;
         virtual std::string repl() const;
+        virtual SString* clone() const;
     protected:
         std::string _name;
     };
@@ -188,6 +198,7 @@ namespace EveCache {
         SInt(int val);
         virtual int value() const;
         virtual std::string repl() const;
+        virtual SInt* clone() const;
     private:
         int _value;
     };
@@ -199,6 +210,7 @@ namespace EveCache {
         SReal(double val);
         virtual double value() const;
         virtual std::string repl() const;
+        virtual SReal* clone() const;
     private:
         double _value;
     };
@@ -211,6 +223,7 @@ namespace EveCache {
         SLongLong(long long val);
         virtual long long value() const;
         virtual std::string repl() const;
+        virtual SLongLong* clone() const;
     private:
         long long _value;
     };
@@ -222,6 +235,7 @@ namespace EveCache {
         SObject();
         virtual std::string name() const;
         virtual std::string repl() const;
+        virtual SObject* clone() const;
     private:
     };
 
@@ -232,6 +246,7 @@ namespace EveCache {
     public:
         SSubstream(int len);
         virtual std::string repl() const;
+        virtual SSubstream* clone() const;
     private:
         int _len;
     };
@@ -244,6 +259,7 @@ namespace EveCache {
         bool isLast() const;
         void setLast(bool l);
         virtual std::string repl() const;
+        virtual SDBRow* clone() const;
     private:
         int _id;
         bool _last;
@@ -254,8 +270,9 @@ namespace EveCache {
 
     class EVECACHE_API SDBRecords : public SNode {
     public:
-        SDBRecords() : SNode(ECompressedRow) {};
-        virtual std::string repl() const { return std::string(""); } ;
+        SDBRecords();
+        virtual std::string repl() const;
+        virtual SDBRecords* clone() const;
     };
 
 /***********************************************************************/

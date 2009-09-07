@@ -200,6 +200,9 @@ namespace EveCache {
     void MarketParser::parse()
     {
         /* Step 1: Determine if this is a market order file */
+        if (_stream->members().size() < 1)
+            throw ParseException("Not a valid file");
+
         SNode *base = _stream->members()[0];
         SIdent *id = dynamic_cast<SIdent*>(base->members()[0]->members()[1]);
         if (id->name() != "GetOrders")

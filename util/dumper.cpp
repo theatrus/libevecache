@@ -66,7 +66,12 @@ void dump(const std::vector<SNode*>& stream, int level)
 void market(const SNode* node)
 {
     MarketParser mp(node);
-    mp.parse();
+    try {
+        mp.parse();
+    } catch (ParseException &e) {
+        std::cerr << "Not a valid orders file" << std::endl;
+        return;
+    }
     MarketList list = mp.getList();
     std::cerr << "MarketList for region " << list.region() << " and type " << list.type() << std::endl;
     std::cout << "price,volRemaining,typeID,range,orderID,volEntered,minVolume,bid,issued,duration,stationID,regionID,solarSystemID,jumps," << std::endl;
@@ -94,15 +99,19 @@ int main(int argc, char** argv)
     }
     bool dumpStructure = false;
     bool dumpMarket = false;
+    int argsconsumed = 1;
+
     // Parse options in simple mode
     if (argc > 2) {
         for (int i = 1; i < argc - 1; i++)
         {
             if (strcmp(argv[i], "--market") == 0) {
                 dumpMarket = true;
+                argsconsumed++;
             }
             if (strcmp(argv[i], "--structure") == 0) {
                 dumpStructure = true;
+                argsconsumed++;
             }
         }
     } else {
@@ -110,35 +119,39 @@ int main(int argc, char** argv)
     }
 
 
-    std::cerr << "File: " << argv[argc-1] << std::endl;
+    for (int filen = argsconsumed; filen < argc - 1; filen++)
     {
-        std::string fileName(argv[argc-1]);
-        CacheFile cF(fileName);
-        cF.readFile();
-        std::cerr << "File length is " << cF.getLength() << " bytes " << std::endl;
-        CacheFile_Iterator i = cF.begin();
-        Parser *parser = new Parser(&i);
+        std::cerr << "File: " << argv[filen] << std::endl;
+        {
+            std::string fileName(argv[filen]);
+            CacheFile cF(fileName);
+            cF.readFile();
+            std::cerr << "File length is " << cF.getLength() << " bytes " << std::endl;
+            CacheFile_Iterator i = cF.begin();
+            Parser *parser = new Parser(&i);
 
-        try {
-            parser->parse();
-        } catch (ParseException e) {
-            std::cerr << "Parse exception " << static_cast<std::string>(e) << std::endl;
-        }
-
-        if (dumpStructure) {
-            // TODO; more than one stream
-            for (int i = 0; i < parser->streams().size(); i++) {
-                const std::vector<SNode*>& streams = parser->streams()[i]->members();
-                dump(streams, 0);
-            }
-        }
-        if (dumpMarket) {
-            for (int i = 0; i < parser->streams().size(); i++) {
-                const SNode* snode = parser->streams()[i];
-                market(snode);
+            try {
+                parser->parse();
+            } catch (ParseException e) {
+                std::cerr << "Parse exception " << static_cast<std::string>(e) << std::endl;
             }
 
+            if (dumpStructure) {
+                // TODO; more than one stream
+                for (int i = 0; i < parser->streams().size(); i++) {
+                    const std::vector<SNode*>& streams = parser->streams()[i]->members();
+                    dump(streams, 0);
+                }
+            }
+            if (dumpMarket) {
+                for (int i = 0; i < parser->streams().size(); i++) {
+                    const SNode* snode = parser->streams()[i];
+                    market(snode);
+                }
+
+            }
+            delete parser;
         }
+        std::cout << std::endl;
     }
-    std::cout << std::endl;
 }
