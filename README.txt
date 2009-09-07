@@ -54,3 +54,4 @@ Support
 E-mail  : atrus at stackworks.net
 IRC     : #evecentral on irc.freenode.org or #eve-dev on irc.coldfont.net
 Code    : http://gitorious.org/libevecache
+Web     : http://dev.eve-central.com/libevecache/
