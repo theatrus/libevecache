@@ -911,7 +911,8 @@ namespace EveCache {
 
                 if (check != EStreamStart) {
                     delete stream;
-                    throw ParseException("No stream start detected...");
+                    //throw ParseException("No stream start detected...");
+                    continue;
                 }
 
                 shareInit();
