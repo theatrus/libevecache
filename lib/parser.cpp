@@ -97,7 +97,6 @@ namespace EveCache {
 
     SNode::SNode(const SNode& rhs)
     {
-        _members.clear();
         std::vector<SNode*>::const_iterator i = rhs._members.begin();
         for ( ; i != rhs._members.end(); ++i)
         {
@@ -116,12 +115,8 @@ namespace EveCache {
         std::vector<SNode*>::iterator i = _members.begin();
         for (; i != _members.end(); ++i)
         {
-            SNode* sn = *i;
-            if (sn) {
-                delete sn;
-            }
+            delete *i;
         }
-        _members.clear();
     }
 
     EStreamCode SNode::type() const
@@ -561,15 +556,17 @@ namespace EveCache {
 
     Parser::~Parser()
     {
+
         std::vector<SNode*>::iterator i = _streams.begin();
         for (; i != _streams.end(); ++i)
         {
             delete *i;
         }
-        _streams.clear();
 
-        for (int j = 0; j <= _sharecount; j++)
-            delete _shareobj[j];
+        for (int j = 0; j <= _sharecount; j++) {
+            if (_shareobj[j] != NULL)
+                delete _shareobj[j];
+        }
 
 
         if (_shareobj != NULL)
@@ -791,12 +788,11 @@ namespace EveCache {
             iter_sub.setLimit(len);
             SSubstream *ss = new SSubstream(len);
             thisobj = ss;
-            Parser *sp = new Parser(&iter_sub);
-            sp->parse();
-            for (int i = 0; i < sp->streams().size(); i++) {
-                ss->addMember(sp->streams()[i]->clone());
+            Parser sp(&iter_sub);
+            sp.parse();
+            for (int i = 0; i < sp.streams().size(); i++) {
+                ss->addMember(sp.streams()[i]->clone());
             }
-            delete sp;
 
             _iter->seek(iter_sub.position());
         }
@@ -915,11 +911,9 @@ namespace EveCache {
         std::vector<unsigned char> newdata;
         rle_unpack(olddata, len, newdata);
         SNode* body = new SDBRow(17, newdata);
-//std::cerr << "DBRow: body: " << body << " == " << body->repl() << std::endl;
 
         CacheFile cF(newdata);
         CacheFile_Iterator blob = cF.begin();
-//std::cerr << "DBRow: blob: length " << cF.getLength() << ", size " << blob.limit() << ", was " << newdata.size() << std::endl;
 
         SDict *dict = new SDict(999999); // TODO: need dynamic sized dict
         int step = 1;
@@ -1007,8 +1001,11 @@ namespace EveCache {
                 if (obj) {
                     // TODO: push upstream
                     dict->addMember(obj);
+                    //delete fn;
                     dict->addMember(fn);
 //std::cerr << "DBRow: dict size " << dict->members().size() << std::endl;
+                } else {
+                    delete fn;
                 }
             }
 
@@ -1029,7 +1026,7 @@ namespace EveCache {
         unsigned int shares = _iter->readInt();
         unsigned int shareskip = 0;
         if (shares) {
-            _sharemap = new unsigned int[shares];
+            _sharemap = new unsigned int[shares+1];
             _shareobj = new SNode*[shares+1];
 
             shareskip = 4 * shares;
@@ -1040,7 +1037,6 @@ namespace EveCache {
             for (i=0; i < shares; i++) {
                 _sharemap[i] = _iter->readInt();
                 _shareobj[i] = NULL;
-//std::cerr << "DEB: sharemap[" << shares << "] = " << i << " == " << _sharemap[i] << std::endl;
             }
             _iter->seek(opos);
             _iter->setLimit(olim - shareskip);
@@ -1057,12 +1053,10 @@ namespace EveCache {
         if (shareid > _sharecount)
             throw ParseException("shareid out of range");
 
-// TODO: how do i check the slot is empty?
-//        if (_shareobj[shareid])
-//            throw ParseException("already have obj");
+        if (_shareobj[shareid] != NULL)
+            throw ParseException("already have obj");
         _shareobj[shareid] = obj->clone();
 
-//std::cerr << "DEB: share add, cursor " << _sharecursor << ", id " << shareid << ", obj " << obj << std::endl;
         _sharecursor++;
     }
 
@@ -1071,8 +1065,6 @@ namespace EveCache {
         if (id > _sharecount)
             throw ParseException("id out of range");
 
-// TODO: how do i check if it exists?
-//std::cerr << "DEB: share get, id " << id << ", obj " << _shareobj[id] << std::endl;
         return _shareobj[id]->clone();
     }
 
