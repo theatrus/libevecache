@@ -701,7 +701,12 @@ namespace EveCache {
             unsigned int len = getLen();
             SDict* dict = new SDict(len * 2); // key & val
             thisobj = dict;
-            parse(dict, len * 2);
+            try {
+                parse(dict, len * 2);
+            } catch (ParseException &e) {
+                delete dict;
+                throw e;
+            }
         }
         break;
         case ETuple2:
@@ -709,14 +714,24 @@ namespace EveCache {
         {
             unsigned int len = getLen();
             thisobj = new STuple(len);
-            parse(thisobj, len);
+            try {
+                parse(thisobj, len);
+            } catch (ParseException &e) {
+                delete thisobj;
+                throw e;
+            }
 
         }
         break;
         case E2Tuple:
         {
             thisobj = new STuple(2);
-            parse(thisobj, 2);
+            try {
+                parse(thisobj, 2);
+            } catch (ParseException &e) {
+                delete thisobj;
+                throw e;
+            }
 
         }
         break;
@@ -724,7 +739,12 @@ namespace EveCache {
         case E1Tuple:
         {
             thisobj = new STuple(1);
-            parse(thisobj, 1);
+            try {
+                parse(thisobj, 1);
+            } catch (ParseException &e) {
+                delete thisobj;
+                throw e;
+            }
 
         }
         break;
@@ -744,7 +764,12 @@ namespace EveCache {
         {
             SObject *obj = new SObject();
             thisobj = obj;
-            parse(obj, 2);
+            try {
+                parse(obj, 2);
+            } catch (ParseException &e) {
+                delete obj;
+                throw e;
+            }
         }
         break;
         case EObject22:
@@ -752,7 +777,12 @@ namespace EveCache {
         {
             SObject *obj = new SObject();
             thisobj = obj;
-            parse(obj, 1);
+            try {
+                parse(obj, 1);
+            } catch (ParseException &e) {
+                delete obj;
+                throw e;
+            }
 
             std::string oclass(obj->name());
 //std::cerr << "Obj: " << obj << " == " << obj->repl() << ", class " << oclass << std::endl;
@@ -766,15 +796,15 @@ namespace EveCache {
 // f.ex. dbutil.RowList -> keep reading rows until you hit the 0x2d marker
 //
             if (! oclass.compare("dbutil.RowList")) {
-                SNode *row;
-                while (row = parseone()) {
-//std::cerr << "YAY! " << row->repl() << std::endl;
-
-                    obj->addMember(row);
+                try {
+                    SNode *row;
+                    while (row = parseone()) {
+                        obj->addMember(row);
+                    }
+                } catch (ParseException &e) {
+                    delete obj;
+                    throw e;
                 }
-//std::cerr << "YAY!" << std::endl;
-
-
             }
 
         }
@@ -788,10 +818,15 @@ namespace EveCache {
             iter_sub.setLimit(len);
             SSubstream *ss = new SSubstream(len);
             thisobj = ss;
-            Parser sp(&iter_sub);
-            sp.parse();
-            for (int i = 0; i < sp.streams().size(); i++) {
-                ss->addMember(sp.streams()[i]->clone());
+            try {
+                Parser sp(&iter_sub);
+                sp.parse();
+                for (int i = 0; i < sp.streams().size(); i++) {
+                    ss->addMember(sp.streams()[i]->clone());
+                }
+            } catch (ParseException &e) {
+                delete ss;
+                throw e;
             }
 
             _iter->seek(iter_sub.position());
@@ -874,8 +909,10 @@ namespace EveCache {
                 char check = _iter->readChar();
                 SNode* stream = new SNode(EStreamStart);
 
-                if (check != EStreamStart)
+                if (check != EStreamStart) {
+                    delete stream;
                     throw ParseException("No stream start detected...");
+                }
 
                 shareInit();
                 _streams.push_back(stream);
