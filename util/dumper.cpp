@@ -119,7 +119,7 @@ int main(int argc, char** argv)
     }
 
 
-    for (int filen = argsconsumed; filen < argc - 1; filen++)
+    for (int filen = argsconsumed; filen <= argc - 1; filen++)
     {
         std::cerr << "File: " << argv[filen] << std::endl;
         {

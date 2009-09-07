@@ -555,7 +555,7 @@ namespace EveCache {
 /***********************************************************************/
 
     Parser::Parser(CacheFile_Iterator *iter)
-        : _iter(iter), _sharecursor(0)
+        : _iter(iter), _sharecount(0), _sharecursor(0), _shareobj(NULL), _sharemap(NULL)
     {
     }
 
@@ -568,10 +568,14 @@ namespace EveCache {
         }
         _streams.clear();
 
-        if (_shareobj != 0)
-            delete _shareobj;
-        if (_sharemap != 0)
-            delete _sharemap;
+        for (int j = 0; j <= _sharecount; j++)
+            delete _shareobj[j];
+
+
+        if (_shareobj != NULL)
+            delete [] _shareobj;
+        if (_sharemap != NULL)
+            delete [] _sharemap;
     }
 
     SNode* Parser::parseone()
@@ -753,7 +757,7 @@ namespace EveCache {
             thisobj = obj;
             parse(obj, 1);
 
-            std::string *oclass = new std::string(obj->name());
+            std::string oclass(obj->name());
 //std::cerr << "Obj: " << obj << " == " << obj->repl() << ", class " << oclass << std::endl;
 
 // HALP
@@ -764,7 +768,7 @@ namespace EveCache {
 //
 // f.ex. dbutil.RowList -> keep reading rows until you hit the 0x2d marker
 //
-            if (! oclass->compare("dbutil.RowList")) {
+            if (! oclass.compare("dbutil.RowList")) {
                 SNode *row;
                 while (row = parseone()) {
 //std::cerr << "YAY! " << row->repl() << std::endl;
@@ -895,8 +899,11 @@ namespace EveCache {
         if (head == NULL)
             throw ParseException("The DBRow header isn't present...");
 
-        if (head->name().compare("blue.DBRowDescriptor"))
-                throw ParseException("bad descriptor name");
+        if (head->name().compare("blue.DBRowDescriptor")) {
+            delete head;
+            throw ParseException("bad descriptor name");
+        }
+
         STuple* fields = dynamic_cast<STuple*>(head->members()[0]->members()[1]->members()[0]);
 //std::cerr << "DBRow: fields: " << fields << " == " << fields->repl() << ", size " << static_cast<unsigned int>(fields->members().size()) << std::endl;
 
@@ -989,11 +996,15 @@ namespace EveCache {
                     break;
                     default:
                     {
+                        if (obj != NULL)
+                            delete obj;
+                        delete fn;
+                        delete body;
+
                         throw ParseException("unhandled ado type");
                     }
                 }
                 if (obj) {
-//std::cerr << "DBRow: obj " << obj->repl() << ", bytes left " << blob.limit() << std::endl;
                     // TODO: push upstream
                     dict->addMember(obj);
                     dict->addMember(fn);
@@ -1010,8 +1021,6 @@ namespace EveCache {
         fakerow->addMember(head);
         fakerow->addMember(body);
         fakerow->addMember(dict);
-//std::cerr << "DBRow: fakerow: " << fakerow << " == " << fakerow->repl() << std::endl;
-
         return fakerow;
     }
 
@@ -1021,7 +1030,7 @@ namespace EveCache {
         unsigned int shareskip = 0;
         if (shares) {
             _sharemap = new unsigned int[shares];
-            _shareobj = new SNode*[shares+1]; // dont ask ...
+            _shareobj = new SNode*[shares+1];
 
             shareskip = 4 * shares;
             unsigned int opos = _iter->position();
@@ -1030,6 +1039,7 @@ namespace EveCache {
             unsigned int i;
             for (i=0; i < shares; i++) {
                 _sharemap[i] = _iter->readInt();
+                _shareobj[i] = NULL;
 //std::cerr << "DEB: sharemap[" << shares << "] = " << i << " == " << _sharemap[i] << std::endl;
             }
             _iter->seek(opos);
@@ -1050,7 +1060,7 @@ namespace EveCache {
 // TODO: how do i check the slot is empty?
 //        if (_shareobj[shareid])
 //            throw ParseException("already have obj");
-        _shareobj[shareid] = obj;
+        _shareobj[shareid] = obj->clone();
 
 //std::cerr << "DEB: share add, cursor " << _sharecursor << ", id " << shareid << ", obj " << obj << std::endl;
         _sharecursor++;

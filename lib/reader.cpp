@@ -41,9 +41,9 @@ namespace EveCache {
         contents = new unsigned char[length];
         unsigned char *cur = contents;
         std::vector<unsigned char>::iterator i = buf.begin();
-        for (; i != buf.end(); ++i) 
-        { 
-            *cur = *i; 
+        for (; i != buf.end(); ++i)
+        {
+            *cur = *i;
             cur++;
         }
         while (cur < contents+length) { // TODO ... need "virtual" 0 at end of buffer?
@@ -63,8 +63,8 @@ namespace EveCache {
 
     CacheFile::~CacheFile()
     {
-        if (contents != 0)
-            delete contents;
+        if (contents != NULL)
+            delete [] contents;
     }
 
     bool CacheFile::readFile()
@@ -215,11 +215,12 @@ namespace EveCache {
 
     std::string CacheFile_Iterator::peekString(int len) const
     {
+        // TODO: This is dumb
         unsigned char *tmp = new unsigned char[len+1];
         cacheFile->peekAt(tmp, pos, len);
         tmp[len] = '\0';
         std::string r(reinterpret_cast<char*>(tmp), len);
-        delete tmp;
+        delete [] tmp;
         return r;
     }
 
