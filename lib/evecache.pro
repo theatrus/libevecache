@@ -1,4 +1,4 @@
-CONFIG -= qt
+CONFIG -= qt debug_and_release debug_and_release_target
 TEMPLATE = lib
 TARGET = evecache
 DEPENDPATH += .
