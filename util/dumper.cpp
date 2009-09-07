@@ -92,9 +92,10 @@ void market(const SNode* node)
 
 int main(int argc, char** argv)
 {
-    std::cerr << "Cache File Dumper " << std::endl;
     if (argc < 2) {
-        std::cerr << "Error: Syntax: " << argv[0] << " [options] [filename]" << std::endl;
+        std::cerr << "Syntax: " << argv[0] << " [options] [filenames+]" << std::endl;
+        std::cerr << "Options: --market       Digest a market order file, converting it to a .CSV file" << std::endl;
+        std::cerr << "         --structure    Print an AST of the cache file" << std::endl;
         return -1;
     }
     bool dumpStructure = false;
@@ -121,12 +122,15 @@ int main(int argc, char** argv)
 
     for (int filen = argsconsumed; filen <= argc - 1; filen++)
     {
-        std::cerr << "File: " << argv[filen] << std::endl;
         {
             std::string fileName(argv[filen]);
             CacheFile cF(fileName);
-            cF.readFile();
-            std::cerr << "File length is " << cF.getLength() << " bytes " << std::endl;
+            if (cF.readFile() == false) {
+                // Not a valid file, skip
+                std::cerr << "Can't open " << fileName << std::endl;
+                continue;
+            }
+
             CacheFile_Iterator i = cF.begin();
             Parser *parser = new Parser(&i);
 

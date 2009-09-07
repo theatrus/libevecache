@@ -104,7 +104,7 @@ namespace EveCache {
 
     unsigned char CacheFile::byteAt(int pos) const
     {
-        if (pos < length)
+        if (pos >= 0 && pos < length)
             return contents[pos];
         throw EndOfFileException();
     }

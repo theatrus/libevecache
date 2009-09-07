@@ -563,10 +563,11 @@ namespace EveCache {
             delete *i;
         }
 
-        for (int j = 0; j <= _sharecount; j++) {
-            if (_shareobj[j] != NULL)
-                delete _shareobj[j];
-        }
+        if (_shareobj != NULL)
+            for (int j = 0; j < _sharecount; j++) {
+                if (_shareobj[j] != NULL)
+                    delete _shareobj[j];
+            }
 
 
         if (_shareobj != NULL)
@@ -706,6 +707,9 @@ namespace EveCache {
             } catch (ParseException &e) {
                 delete dict;
                 throw e;
+            } catch (EndOfFileException &e) {
+                delete dict;
+                throw e;
             }
         }
         break;
@@ -717,6 +721,9 @@ namespace EveCache {
             try {
                 parse(thisobj, len);
             } catch (ParseException &e) {
+                delete thisobj;
+                throw e;
+            } catch (EndOfFileException &e) {
                 delete thisobj;
                 throw e;
             }
@@ -731,6 +738,9 @@ namespace EveCache {
             } catch (ParseException &e) {
                 delete thisobj;
                 throw e;
+            } catch (EndOfFileException &e) {
+                delete thisobj;
+                throw e;
             }
 
         }
@@ -742,6 +752,9 @@ namespace EveCache {
             try {
                 parse(thisobj, 1);
             } catch (ParseException &e) {
+                delete thisobj;
+                throw e;
+            } catch (EndOfFileException &e) {
                 delete thisobj;
                 throw e;
             }
@@ -769,6 +782,9 @@ namespace EveCache {
             } catch (ParseException &e) {
                 delete obj;
                 throw e;
+            } catch (EndOfFileException &e) {
+                delete obj;
+                throw e;
             }
         }
         break;
@@ -780,6 +796,9 @@ namespace EveCache {
             try {
                 parse(obj, 1);
             } catch (ParseException &e) {
+                delete obj;
+                throw e;
+            } catch (EndOfFileException &e) {
                 delete obj;
                 throw e;
             }
@@ -804,6 +823,9 @@ namespace EveCache {
                 } catch (ParseException &e) {
                     delete obj;
                     throw e;
+                } catch (EndOfFileException &e) {
+                    delete obj;
+                    throw e;
                 }
             }
 
@@ -825,6 +847,9 @@ namespace EveCache {
                     ss->addMember(sp.streams()[i]->clone());
                 }
             } catch (ParseException &e) {
+                delete ss;
+                throw e;
+            } catch (EndOfFileException &e) {
                 delete ss;
                 throw e;
             }
@@ -1062,6 +1087,9 @@ namespace EveCache {
     unsigned int Parser::shareInit()
     {
         unsigned int shares = _iter->readInt();
+        if (shares >= 16384) // Some large number
+            return 0;
+
         unsigned int shareskip = 0;
         if (shares) {
             _sharemap = new unsigned int[shares+1];
@@ -1091,8 +1119,8 @@ namespace EveCache {
         if (shareid > _sharecount)
             throw ParseException("shareid out of range");
 
-        if (_shareobj[shareid] != NULL)
-            throw ParseException("already have obj");
+        //if (_shareobj[shareid] != NULL)
+        //throw ParseException("already have obj");
         _shareobj[shareid] = obj->clone();
 
         _sharecursor++;

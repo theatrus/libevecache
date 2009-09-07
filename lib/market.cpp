@@ -38,6 +38,7 @@ namespace EveCache {
     {
         std::stringstream ss;
         ss << (price() / 10000) << "." << ((price() - ((price() / 10000)*10000)) / 100);
+        ss << std::fixed << std::showpoint;
         ss << "," << volRemaining();
         ss << "," << type();
         ss << "," << range();
@@ -204,6 +205,12 @@ namespace EveCache {
             throw ParseException("Not a valid file");
 
         SNode *base = _stream->members()[0];
+
+        if (base->members().size() < 1)
+            throw ParseException("Not a valid orders file");
+        if (base->members()[0]->members().size() < 2)
+            throw ParseException("Not a valid orders file");
+
         SIdent *id = dynamic_cast<SIdent*>(base->members()[0]->members()[1]);
         if (id->name() != "GetOrders")
             throw ParseException("Not a valid orders file");
