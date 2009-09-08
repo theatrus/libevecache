@@ -674,6 +674,13 @@ namespace EveCache {
             thisobj = new SString("");
         }
         break;
+        case EUnicodeString2:
+        {
+            /* Single unicode character */
+            std::string data = _iter->readString(2);
+            thisobj = new SString(data);
+        }
+        break;
         case EString3:
         {
             std::string data = _iter->readString(1);
@@ -681,6 +688,7 @@ namespace EveCache {
         }
         break;
         case EUnicodeString:
+        case EString4:
         case EString2:
         case EString:
         {

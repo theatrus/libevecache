@@ -43,7 +43,9 @@ namespace EveCache {
         EString = 0x2, // Another type of string, also ids
         EString2 = 0x2e, // stringtastic
         EString3 = 0xf, // really? another? single character string
+        EString4 = 0x10,
         EUnicodeString = 0x12,
+        EUnicodeString2 = 0x29,
         EEmptyString = 0x28, // empty
         EInteger = 0x04, // 4 byte, little endian?
         EReal = 0x0a, // floating point, 64 bits, assume matches machine double type
