@@ -564,7 +564,7 @@ namespace EveCache {
         }
 
         if (_shareobj != NULL)
-            for (int j = 0; j < _sharecount; j++) {
+            for (int j = 0; j <= _sharecount; j++) {
                 if (_shareobj[j] != NULL)
                     delete _shareobj[j];
             }
@@ -859,7 +859,15 @@ namespace EveCache {
         break;
         case ECompressedRow:
         {
-            thisobj = getDBRow();
+            try {
+                thisobj = getDBRow();
+            } catch (ParseException &e) {
+                delete thisobj;
+                throw e;
+            } catch (EndOfFileException &e) {
+                delete thisobj;
+                throw e;
+            }
         }
         break;
         case ESharedObj:
@@ -906,7 +914,13 @@ namespace EveCache {
             if (!thisobj) {
                 throw ParseException("shared flag but no obj");
             }
-            shareAdd(thisobj);
+            try {
+                shareAdd(thisobj);
+            } catch (ParseException &e) {
+                delete thisobj;
+                throw e;
+            }
+
         }
 
         return thisobj;
@@ -940,8 +954,8 @@ namespace EveCache {
                     continue;
                 }
 
-                shareInit();
                 _streams.push_back(stream);
+                shareInit();
                 parse(stream, 1); // -1 = not sure how long this will be
 
                 shareSkip();
@@ -1057,16 +1071,15 @@ namespace EveCache {
                             delete obj;
                         delete fn;
                         delete body;
+                        delete head;
+                        delete dict;
 
                         throw ParseException("unhandled ado type");
                     }
                 }
                 if (obj) {
-                    // TODO: push upstream
                     dict->addMember(obj);
-                    //delete fn;
                     dict->addMember(fn);
-//std::cerr << "DBRow: dict size " << dict->members().size() << std::endl;
                 } else {
                     delete fn;
                 }
@@ -1104,6 +1117,9 @@ namespace EveCache {
                 _sharemap[i] = _iter->readInt();
                 _shareobj[i] = NULL;
             }
+            _shareobj[shares] = NULL;
+            _sharemap[shares] = 0;
+
             _iter->seek(opos);
             _iter->setLimit(olim - shareskip);
         }
@@ -1113,14 +1129,19 @@ namespace EveCache {
 
     void Parser::shareAdd(SNode *obj)
     {
+        if (_sharemap == NULL || _shareobj == NULL)
+            throw ParseException("Uninitialized share");
         if (_sharecursor >= _sharecount)
             throw ParseException("cursor out of range");
         unsigned int shareid = _sharemap[_sharecursor];
         if (shareid > _sharecount)
             throw ParseException("shareid out of range");
 
-        //if (_shareobj[shareid] != NULL)
-        //throw ParseException("already have obj");
+        /** This is bad, but a memory leak fix until the sharetab support is better */
+        if (_shareobj[shareid] != NULL) {
+            //throw ParseException("already have obj");
+            delete _shareobj[shareid];
+        }
         _shareobj[shareid] = obj->clone();
 
         _sharecursor++;

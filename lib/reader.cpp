@@ -217,11 +217,16 @@ namespace EveCache {
     {
         // TODO: This is dumb
         unsigned char *tmp = new unsigned char[len+1];
-        cacheFile->peekAt(tmp, pos, len);
-        tmp[len] = '\0';
-        std::string r(reinterpret_cast<char*>(tmp), len);
-        delete [] tmp;
-        return r;
+        try {
+            cacheFile->peekAt(tmp, pos, len);
+            tmp[len] = '\0';
+            std::string r(reinterpret_cast<char*>(tmp), len);
+            delete [] tmp;
+            return r;
+        } catch (EndOfFileException &e) {
+            delete [] tmp;
+            throw e;
+        }
     }
 
     void CacheFile_Iterator::seek(int lpos)
