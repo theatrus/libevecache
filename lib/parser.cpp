@@ -967,10 +967,13 @@ namespace EveCache {
 
     SNode* Parser::getDBRow()
     {
+        SNode *nhead = parseone();
         // get header
-        SObject* head = dynamic_cast<SObject*>(parseone());
-        if (head == NULL)
+        SObject* head = dynamic_cast<SObject*>(nhead);
+        if (head == NULL) {
+            delete nhead;
             throw ParseException("The DBRow header isn't present...");
+        }
 
         if (head->name().compare("blue.DBRowDescriptor")) {
             delete head;
