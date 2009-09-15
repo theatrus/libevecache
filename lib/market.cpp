@@ -37,7 +37,15 @@ namespace EveCache {
     std::string MarketOrder::toCsv() const
     {
         std::stringstream ss;
-        ss << (price() / 10000) << "." << ((price() - ((price() / 10000)*10000)) / 100);
+        ss << (price() / 10000) << ".";
+
+        int decimal_price = ((price() - ((price() / 10000)*10000)) / 100);
+
+        if (decimal_price < 10)
+            ss << "0" << decimal_price;
+        else
+            ss << decimal_price;
+
         ss << std::fixed << std::showpoint;
         ss << "," << volRemaining();
         ss << "," << type();
