@@ -26,6 +26,7 @@
 #include "evecache/exceptions.hpp"
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <sstream>
 
@@ -37,16 +38,10 @@ namespace EveCache {
     std::string MarketOrder::toCsv() const
     {
         std::stringstream ss;
-        ss << (price() / 10000) << ".";
+        ss << std::fixed << std::showpoint << std::setprecision(2);
+        ss << price() / 10000.0;
 
-        int decimal_price = ((price() - ((price() / 10000)*10000)) / 100);
-
-        if (decimal_price < 10)
-            ss << "0" << decimal_price;
-        else
-            ss << decimal_price;
-
-        ss << std::fixed << std::showpoint;
+        ss << std::setprecision(1);
         ss << "," << volRemaining();
         ss << "," << type();
         ss << "," << range();
