@@ -1,5 +1,8 @@
+import distutils.sysconfig
+
 lenv = Environment(CPPPATH = ['lib/'])
 env = Environment(CPPPATH = ['lib/'])
+pyenv = Environment(SWIGFLAGS=['-c++', '-python'], CPPPATH = ['lib/', distutils.sysconfig.get_python_inc()], SHLIBPREFIX="")
 platform = ARGUMENTS.get('OS', Platform())
 
 if platform.name == "win32":
@@ -12,6 +15,8 @@ else:
    env.Append(CPPFLAGS=["-g3"])
 
 lib = lenv.SharedLibrary('evecache', Glob('lib/*cpp'))
+pyext = pyenv.SharedLibrary('_libevecache.so', ['lib/libevecache.i'], LIBS=lib)
+
 if platform.name == "win32":
    env.Program('util/dumper.cpp', LIBS='evecache') # try to link with .lib, not .dll
 else:
