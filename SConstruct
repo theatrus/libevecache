@@ -15,7 +15,7 @@ else:
    env.Append(CPPFLAGS=["-g3"])
 
 lib = lenv.SharedLibrary('evecache', Glob('lib/*cpp'))
-pyext = pyenv.SharedLibrary('_libevecache.so', ['lib/libevecache.i'], LIBS=lib)
+pyext = pyenv.SharedLibrary('_evecache.so', ['lib/libevecache.i'], LIBS=lib)
 
 if platform.name == "win32":
    env.Program('util/dumper.cpp', LIBS='evecache') # try to link with .lib, not .dll
