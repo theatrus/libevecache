@@ -71,10 +71,6 @@ namespace EveCache {
         virtual void addMember(SNode* node);
         virtual const std::vector<SNode*>& members() const;
         virtual SNode* clone() const;
-    private:
-        EStreamCode _type;
-    protected:
-        std::vector<SNode*> _members;
     };
 
 /***********************************************************************/
@@ -187,8 +183,6 @@ namespace EveCache {
         virtual int value() const;
         virtual std::string repl() const;
         virtual SInt* clone() const;
-    private:
-        int _value;
     };
 
 /***********************************************************************/
@@ -199,8 +193,6 @@ namespace EveCache {
         virtual double value() const;
         virtual std::string repl() const;
         virtual SReal* clone() const;
-    private:
-        double _value;
     };
 
 
@@ -212,8 +204,6 @@ namespace EveCache {
         virtual long long value() const;
         virtual std::string repl() const;
         virtual SLongLong* clone() const;
-    private:
-        long long _value;
     };
 
 /***********************************************************************/
@@ -235,8 +225,6 @@ namespace EveCache {
         SSubstream(int len);
         virtual std::string repl() const;
         virtual SSubstream* clone() const;
-    private:
-        int _len;
     };
 
 /***********************************************************************/
@@ -248,10 +236,6 @@ namespace EveCache {
         void setLast(bool l);
         virtual std::string repl() const;
         virtual SDBRow* clone() const;
-    private:
-        int _id;
-        bool _last;
-        std::vector<unsigned char> _data;
     };
 
 /***********************************************************************/
@@ -280,13 +264,6 @@ namespace EveCache {
         void shareAdd(SNode* obj);
         SNode* shareGet(unsigned int id);
         void shareSkip();
-    private:
-        std::vector<SNode*> _streams;
-        CacheFile_Iterator *_iter;
-        unsigned int _sharecount;   // number of shared obj
-        unsigned int _sharecursor;  // current index into
-        unsigned int *_sharemap;    // list of slot mappings
-        SNode **_shareobj;          // list of already discovered shareds
     };
 
 
@@ -344,21 +321,6 @@ namespace EveCache {
         unsigned int jumps() const  { return _jumps; }
         unsigned int type() const { return _type; }
 
-    private:
-        unsigned long long _price;
-        double _volRemaining;
-        unsigned int _range;
-        unsigned long long _orderID;
-        unsigned int _volEntered;
-        unsigned int _minVolume;
-        bool _bid;
-        unsigned long long _issued;
-        unsigned int _duration;
-        unsigned int _stationID;
-        unsigned int _solarSystemID;
-        unsigned int _regionID;
-        unsigned int _jumps;
-        unsigned int _type;
     };
 
 
@@ -385,11 +347,6 @@ namespace EveCache {
 
         void addOrder(MarketOrder& order);
 
-    private:
-        int _type;
-        int _region;
-        std::vector<MarketOrder> _sellOrders;
-        std::vector<MarketOrder> _buyOrders;
     };
 
 
@@ -399,11 +356,9 @@ namespace EveCache {
         ~MarketParser();
         MarketList getList() const;
         void parse();
-    private:
-        void parse(const SNode* nest);
-        void parseDbRow(const SNode* nest);
-        MarketList _list;
-        const SNode *_stream;
+        MarketParser(const char* fileName);
+        MarketParser(const std::string fileName);
+
     };
 
 
@@ -421,11 +376,6 @@ namespace EveCache {
         unsigned char byteAt(int) const;
         void peekAt(unsigned char* data, int at, int len) const;
 
-    private:
-        unsigned char* contents;
-        int length;
-        bool valid;
-        std::string filename;
     };
 
     class  CacheFile_Iterator { // This does not adhere to the iterator protocol, yet
@@ -465,15 +415,6 @@ namespace EveCache {
         void seek(int pos);
         bool advance(int len);
         void setLimit(int limit);
-
-
-
-
-    private:
-        CacheFile const *cacheFile;
-        int lastPeek;
-        int pos;
-        int _limit;
 
     };
 

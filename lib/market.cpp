@@ -22,6 +22,7 @@
 
 #include "evecache/market.hpp"
 #include "evecache/dbtypes.hpp"
+#include "evecache/reader.hpp"
 #include "evecache/parser.hpp"
 #include "evecache/exceptions.hpp"
 
@@ -95,8 +96,34 @@ namespace EveCache {
 
     }
 
+    MarketParser::MarketParser(const char* fileName)
+    {
+        initWithFile(std::string(fileName));
+    }
+
+    MarketParser::MarketParser(const std::string fileName)
+    {
+        initWithFile(fileName);
+    }
+
     MarketParser::~MarketParser()
     {
+    }
+
+    void MarketParser::initWithFile(const std::string& fileName)
+    {
+        CacheFile cF(fileName);
+        if (cF.readFile() == false) {
+            throw new ParseException("Can't open file" + fileName);
+        }
+        CacheFile_Iterator i = cF.begin();
+        Parser *parser = new Parser(&i);
+        parser->parse();
+        const SNode* snode = parser->streams()[0];
+        _stream = snode;
+        parse();
+        delete parser;
+        _stream = NULL;
     }
 
     void MarketParser::parseDbRow(const SNode* node)
@@ -203,6 +230,9 @@ namespace EveCache {
 
     void MarketParser::parse()
     {
+        if (_stream == NULL)
+            return;
+
         /* Step 1: Determine if this is a market order file */
         if (_stream->members().size() < 1)
             throw ParseException("Not a valid file");

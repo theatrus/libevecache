@@ -2,7 +2,7 @@ import distutils.sysconfig
 
 lenv = Environment(CPPPATH = ['lib/'])
 env = Environment(CPPPATH = ['lib/'])
-pyenv = Environment(SWIGFLAGS=['-c++', '-python'], CPPPATH = ['lib/', distutils.sysconfig.get_python_inc()], SHLIBPREFIX="")
+pyenv = Environment(SWIGFLAGS=['-c++', '-python', '-classic'], CPPPATH = ['lib/', distutils.sysconfig.get_python_inc()], SHLIBPREFIX="")
 platform = ARGUMENTS.get('OS', Platform())
 
 if platform.name == "win32":
