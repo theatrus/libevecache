@@ -660,6 +660,8 @@ namespace EveCache {
                 thisobj = new SInt(_iter->readInt()); // not observed
             else if (len == 2)
                 thisobj = new SInt(_iter->readShort()); // not observed
+            else if (len == 3)
+                thisobj = new SInt((_iter->readChar()) + (_iter->readChar() << 16));
         }
         break;
         case EIdent:
