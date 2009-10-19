@@ -233,6 +233,7 @@ namespace EveCache {
         if (_stream == NULL)
             return;
 
+        /* Todo: fixed offsets = bad :) */
         /* Step 1: Determine if this is a market order file */
         if (_stream->members().size() < 1)
             throw ParseException("Not a valid file");
@@ -248,11 +249,17 @@ namespace EveCache {
         if (id->name() != "GetOrders")
             throw ParseException("Not a valid orders file");
 
-        /* Todo: fixed offsets = bad :) */
+        /* Retrieve the region and type */
+
+        SInt *region = dynamic_cast<SInt*>(base->members()[0]->members()[2]);
+        SInt *type = dynamic_cast<SInt*>(base->members()[0]->members()[3]);
+        _list.setRegion(region->value());
+        _list.setType(type->value());
+
 
         SNode *obj = dynamic_cast<SObject*>(base->members()[1]->members()[0]); // Should be an SObject
         if (obj == NULL)
-            throw ParseException("Can't find the SObject");
+            return;
         parse(obj);
     }
 
