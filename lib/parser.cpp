@@ -689,6 +689,12 @@ namespace EveCache {
             thisobj = new SString(data);
         }
         break;
+        case EString0:
+        {
+            std::string data;
+            thisobj = new SString(data);
+        }
+        break;
         case EUnicodeString:
         case EString4:
         case EString2:

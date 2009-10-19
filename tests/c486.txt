@@ -1,0 +1,871 @@
+000000 | <<RootStream>> {
+000005 |   <<Tuple>> {
+000006 |     <<Tuple>> {
+000007 |       IdentString::corporationSvc
+000017 |       IdentString::GetNPCDivisions
+000027 |     }
+000028 |     <<Dict>> {
+00002A |       <<PyObject>> {
+00002B |         IdentString::objectCaching.CachedMethodCallResult
+000051 |         <<Tuple>> {
+000053 |           <<Dict>> {
+000055 |             <<Tuple>> {
+000057 |               IdentString::never
+00005E |               None::
+00005F |               None::
+00005F |             }
+000060 |             IdentString::versionCheck
+00006D |           }
+00006E |           <<Substream( B:000074, O:00039D , T:0003A1 )>> {
+000079 |             <<CObject 0x23>> {
+00007A |               <<Tuple>> {
+00007B |                 <<Tuple>> {
+00007C |                   StringNode::dbutil.CRowset
+00008B |                 }
+00008C |                 <<Dict>> {
+00008E |                   <<EnumeratedObject>> {
+00008F |                     <<Tuple>> {
+000090 |                       StringNode::blue.DBRowDescriptor
+0000A6 |                       <<Tuple>> {
+0000A7 |                         <<Tuple>> {
+0000A9 |                           <<Tuple>> {
+0000AA |                             IdentMarker::divisionID
+0000AC |                             IntegerNode::17
+0000AD |                           }
+0000AE |                           <<Tuple>> {
+0000AF |                             IdentString::divisionName
+0000BD |                             IntegerNode::130
+0000BF |                           }
+0000C0 |                           <<Tuple>> {
+0000C1 |                             IdentMarker::description
+0000C3 |                             IntegerNode::130
+0000C5 |                           }
+0000C6 |                           <<Tuple>> {
+0000C7 |                             IdentString::leaderType
+0000D3 |                             IntegerNode::130
+0000D5 |                           }
+0000D5 |                         }
+0000D5 |                       }
+0000D5 |                     }
+0000D6 |                     DbEndRecordMarker::EveCacheLib.StreamNodes.DbEndRecordMarker
+0000D7 |                     DbEndRecordMarker::EveCacheLib.StreamNodes.DbEndRecordMarker
+0000D7 |                   }
+0000D8 |                   IdentMarker::header
+0000D9 |                 }
+0000D9 |               }
+0000DA |               <<DbRow>> {
+0000DB |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 01
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 01
+       |                   Unpacked Chars:  .
+       |                 ]
+0000E0 |                 StringNode::Accounting
+0000EC |                 StringNode::
+0000ED |                 StringNode::CFO
+       |                 VALUES:[
+       |                   divisionID  : 1
+       |                   divisionName: Accounting
+       |                   description : 
+       |                   leaderType  : CFO
+       |                 ]
+0000F1 |               }
+0000F2 |               <<DbRow>> {
+0000F3 |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 02
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 02
+       |                   Unpacked Chars:  .
+       |                 ]
+0000F8 |                 StringNode::Administration
+000108 |                 StringNode::
+000109 |                 StringNode::CFO
+       |                 VALUES:[
+       |                   divisionID  : 2
+       |                   divisionName: Administration
+       |                   description : 
+       |                   leaderType  : CFO
+       |                 ]
+00010D |               }
+00010E |               <<DbRow>> {
+00010F |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 03
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 03
+       |                   Unpacked Chars:  .
+       |                 ]
+000114 |                 StringNode::Advisory
+00011E |                 StringNode::
+00011F |                 StringNode::Chief Advisor
+       |                 VALUES:[
+       |                   divisionID  : 3
+       |                   divisionName: Advisory
+       |                   description : 
+       |                   leaderType  : Chief Advisor
+       |                 ]
+00012D |               }
+00012E |               <<DbRow>> {
+00012F |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 04
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 04
+       |                   Unpacked Chars:  .
+       |                 ]
+000134 |                 StringNode::Archives
+00013E |                 StringNode::
+00013F |                 StringNode::Chief Archivist
+       |                 VALUES:[
+       |                   divisionID  : 4
+       |                   divisionName: Archives
+       |                   description : 
+       |                   leaderType  : Chief Archivist
+       |                 ]
+00014F |               }
+000150 |               <<DbRow>> {
+000151 |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 05
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 05
+       |                   Unpacked Chars:  .
+       |                 ]
+000156 |                 StringNode::Astrosurveying
+000166 |                 StringNode::
+000167 |                 StringNode::Survey Manager
+       |                 VALUES:[
+       |                   divisionID  : 5
+       |                   divisionName: Astrosurveying
+       |                   description : 
+       |                   leaderType  : Survey Manager
+       |                 ]
+000176 |               }
+000177 |               <<DbRow>> {
+000178 |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 06
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 06
+       |                   Unpacked Chars:  .
+       |                 ]
+00017D |                 StringNode::Command
+000186 |                 StringNode::
+000187 |                 StringNode::COO
+       |                 VALUES:[
+       |                   divisionID  : 6
+       |                   divisionName: Command
+       |                   description : 
+       |                   leaderType  : COO
+       |                 ]
+00018B |               }
+00018C |               <<DbRow>> {
+00018D |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 07
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 07
+       |                   Unpacked Chars:  .
+       |                 ]
+000192 |                 StringNode::Distribution
+0001A0 |                 StringNode::
+0001A1 |                 StringNode::Distribution Manager
+       |                 VALUES:[
+       |                   divisionID  : 7
+       |                   divisionName: Distribution
+       |                   description : 
+       |                   leaderType  : Distribution Manager
+       |                 ]
+0001B6 |               }
+0001B7 |               <<DbRow>> {
+0001B8 |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 08
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 08
+       |                   Unpacked Chars:  .
+       |                 ]
+0001BD |                 StringNode::Financial
+0001C8 |                 StringNode::
+0001C9 |                 StringNode::CFO
+       |                 VALUES:[
+       |                   divisionID  : 8
+       |                   divisionName: Financial
+       |                   description : 
+       |                   leaderType  : CFO
+       |                 ]
+0001CD |               }
+0001CE |               <<DbRow>> {
+0001CF |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 09
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 09
+       |                   Unpacked Chars:  .
+       |                 ]
+0001D4 |                 StringNode::Intelligence
+0001E2 |                 StringNode::
+0001E3 |                 StringNode::Chief Operative
+       |                 VALUES:[
+       |                   divisionID  : 9
+       |                   divisionName: Intelligence
+       |                   description : 
+       |                   leaderType  : Chief Operative
+       |                 ]
+0001F3 |               }
+0001F4 |               <<DbRow>> {
+0001F5 |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 0A
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 0A
+       |                   Unpacked Chars:  .
+       |                 ]
+0001FA |                 StringNode::Internal Security
+00020D |                 StringNode::
+00020E |                 StringNode::Commander
+       |                 VALUES:[
+       |                   divisionID  : 10
+       |                   divisionName: Internal Security
+       |                   description : 
+       |                   leaderType  : Commander
+       |                 ]
+000218 |               }
+000219 |               <<DbRow>> {
+00021A |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 0B
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 0B
+       |                   Unpacked Chars:  .
+       |                 ]
+00021F |                 StringNode::Legal
+000226 |                 StringNode::
+000227 |                 StringNode::Principal Clerk
+       |                 VALUES:[
+       |                   divisionID  : 11
+       |                   divisionName: Legal
+       |                   description : 
+       |                   leaderType  : Principal Clerk
+       |                 ]
+000237 |               }
+000238 |               <<DbRow>> {
+000239 |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 0C
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 0C
+       |                   Unpacked Chars:  .
+       |                 ]
+00023E |                 StringNode::Manufacturing
+00024D |                 StringNode::
+00024E |                 StringNode::Assembly Manager
+       |                 VALUES:[
+       |                   divisionID  : 12
+       |                   divisionName: Manufacturing
+       |                   description : 
+       |                   leaderType  : Assembly Manager
+       |                 ]
+00025F |               }
+000260 |               <<DbRow>> {
+000261 |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 0D
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 0D
+       |                   Unpacked Chars:  .
+       |                 ]
+000266 |                 StringNode::Marketing
+000271 |                 StringNode::
+000272 |                 StringNode::Market Manager
+       |                 VALUES:[
+       |                   divisionID  : 13
+       |                   divisionName: Marketing
+       |                   description : 
+       |                   leaderType  : Market Manager
+       |                 ]
+000281 |               }
+000282 |               <<DbRow>> {
+000283 |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 0E
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 0E
+       |                   Unpacked Chars:  .
+       |                 ]
+000288 |                 StringNode::Mining
+000290 |                 StringNode::
+000291 |                 StringNode::Mining Coordinator
+       |                 VALUES:[
+       |                   divisionID  : 14
+       |                   divisionName: Mining
+       |                   description : 
+       |                   leaderType  : Mining Coordinator
+       |                 ]
+0002A4 |               }
+0002A5 |               <<DbRow>> {
+0002A6 |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 0F
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 0F
+       |                   Unpacked Chars:  .
+       |                 ]
+0002AB |                 StringNode::Personnel
+0002B6 |                 StringNode::
+0002B7 |                 StringNode::Chief of Staff
+       |                 VALUES:[
+       |                   divisionID  : 15
+       |                   divisionName: Personnel
+       |                   description : 
+       |                   leaderType  : Chief of Staff
+       |                 ]
+0002C6 |               }
+0002C7 |               <<DbRow>> {
+0002C8 |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 10
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 10
+       |                   Unpacked Chars:  .
+       |                 ]
+0002CD |                 StringNode::Production
+0002D9 |                 StringNode::
+0002DA |                 StringNode::Production Manager
+       |                 VALUES:[
+       |                   divisionID  : 16
+       |                   divisionName: Production
+       |                   description : 
+       |                   leaderType  : Production Manager
+       |                 ]
+0002ED |               }
+0002EE |               <<DbRow>> {
+0002EF |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 11
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 11
+       |                   Unpacked Chars:  .
+       |                 ]
+0002F4 |                 StringNode::Public Relations
+000306 |                 StringNode::
+000307 |                 StringNode::Chief Coordinator
+       |                 VALUES:[
+       |                   divisionID  : 17
+       |                   divisionName: Public Relations
+       |                   description : 
+       |                   leaderType  : Chief Coordinator
+       |                 ]
+000319 |               }
+00031A |               <<DbRow>> {
+00031B |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 12
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 12
+       |                   Unpacked Chars:  .
+       |                 ]
+000320 |                 StringNode::R&D
+000325 |                 StringNode::
+000326 |                 StringNode::Chief Researcher
+       |                 VALUES:[
+       |                   divisionID  : 18
+       |                   divisionName: R&D
+       |                   description : 
+       |                   leaderType  : Chief Researcher
+       |                 ]
+000337 |               }
+000338 |               <<DbRow>> {
+000339 |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 13
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 13
+       |                   Unpacked Chars:  .
+       |                 ]
+00033E |                 StringNode::Security
+000348 |                 StringNode::
+000349 |                 StringNode::Commander
+       |                 VALUES:[
+       |                   divisionID  : 19
+       |                   divisionName: Security
+       |                   description : 
+       |                   leaderType  : Commander
+       |                 ]
+000353 |               }
+000354 |               <<DbRow>> {
+000355 |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 14
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 14
+       |                   Unpacked Chars:  .
+       |                 ]
+00035A |                 StringNode::Storage
+000363 |                 StringNode::
+000364 |                 StringNode::Storage Facilitator
+       |                 VALUES:[
+       |                   divisionID  : 20
+       |                   divisionName: Storage
+       |                   description : 
+       |                   leaderType  : Storage Facilitator
+       |                 ]
+000378 |               }
+000379 |               <<DbRow>> {
+00037A |                 ObjectRef::ref-to-id: 1 @0x00008E
+       |                 Payload:[
+       |                   Packed Bytes  : 87 15
+       |                   Packed Chars  :  .  .
+       |                   Unpacked Bytes: 15
+       |                   Unpacked Chars:  .
+       |                 ]
+00037F |                 StringNode::Surveillance
+00038D |                 StringNode::
+00038E |                 StringNode::Chief Scout
+       |                 VALUES:[
+       |                   divisionID  : 21
+       |                   divisionName: Surveillance
+       |                   description : 
+       |                   leaderType  : Chief Scout
+       |                 ]
+00039A |               }
+00039B |               DbEndRecordMarker::EveCacheLib.StreamNodes.DbEndRecordMarker
+00039C |               DbEndRecordMarker::EveCacheLib.StreamNodes.DbEndRecordMarker
+00039C |             }
+0003A0 |           }
+0003A1 |           <<Tuple>> {
+0003A3 |             BigInteger::8247296017325804033
+0003AD |             IntegerNode::-1692339525
+0003B1 |           }
+0003B1 |         }
+0003B1 |       }
+0003B2 |       IdentString::rret
+0003B8 |       BigInteger::7848024862373366273
+0003C2 |       IdentMarker::used
+0003C4 |       <<CObject 0x23>> {
+0003C5 |         <<Tuple>> {
+0003C6 |           <<Tuple>> {
+0003C7 |             StringNode::dbutil.CRowset
+0003D6 |           }
+0003D7 |           <<Dict>> {
+0003D9 |             <<EnumeratedObject>> {
+0003DA |               <<Tuple>> {
+0003DB |                 StringNode::blue.DBRowDescriptor
+0003F1 |                 <<Tuple>> {
+0003F2 |                   <<Tuple>> {
+0003F4 |                     <<Tuple>> {
+0003F5 |                       IdentMarker::divisionID
+0003F7 |                       IntegerNode::17
+0003F8 |                     }
+0003F9 |                     <<Tuple>> {
+0003FA |                       IdentString::divisionName
+000408 |                       IntegerNode::130
+00040A |                     }
+00040B |                     <<Tuple>> {
+00040C |                       IdentMarker::description
+00040E |                       IntegerNode::130
+000410 |                     }
+000411 |                     <<Tuple>> {
+000412 |                       IdentString::leaderType
+00041E |                       IntegerNode::130
+000420 |                     }
+000420 |                   }
+000420 |                 }
+000420 |               }
+000421 |               DbEndRecordMarker::EveCacheLib.StreamNodes.DbEndRecordMarker
+000422 |               DbEndRecordMarker::EveCacheLib.StreamNodes.DbEndRecordMarker
+000422 |             }
+000423 |             IdentMarker::header
+000424 |           }
+000424 |         }
+000425 |         <<DbRow>> {
+000426 |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 01
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 01
+       |             Unpacked Chars:  .
+       |           ]
+00042B |           StringNode::Accounting
+000437 |           StringNode::
+000438 |           StringNode::CFO
+       |           VALUES:[
+       |             divisionID  : 1
+       |             divisionName: Accounting
+       |             description : 
+       |             leaderType  : CFO
+       |           ]
+00043C |         }
+00043D |         <<DbRow>> {
+00043E |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 02
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 02
+       |             Unpacked Chars:  .
+       |           ]
+000443 |           StringNode::Administration
+000453 |           StringNode::
+000454 |           StringNode::CFO
+       |           VALUES:[
+       |             divisionID  : 2
+       |             divisionName: Administration
+       |             description : 
+       |             leaderType  : CFO
+       |           ]
+000458 |         }
+000459 |         <<DbRow>> {
+00045A |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 03
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 03
+       |             Unpacked Chars:  .
+       |           ]
+00045F |           StringNode::Advisory
+000469 |           StringNode::
+00046A |           StringNode::Chief Advisor
+       |           VALUES:[
+       |             divisionID  : 3
+       |             divisionName: Advisory
+       |             description : 
+       |             leaderType  : Chief Advisor
+       |           ]
+000478 |         }
+000479 |         <<DbRow>> {
+00047A |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 04
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 04
+       |             Unpacked Chars:  .
+       |           ]
+00047F |           StringNode::Archives
+000489 |           StringNode::
+00048A |           StringNode::Chief Archivist
+       |           VALUES:[
+       |             divisionID  : 4
+       |             divisionName: Archives
+       |             description : 
+       |             leaderType  : Chief Archivist
+       |           ]
+00049A |         }
+00049B |         <<DbRow>> {
+00049C |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 05
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 05
+       |             Unpacked Chars:  .
+       |           ]
+0004A1 |           StringNode::Astrosurveying
+0004B1 |           StringNode::
+0004B2 |           StringNode::Survey Manager
+       |           VALUES:[
+       |             divisionID  : 5
+       |             divisionName: Astrosurveying
+       |             description : 
+       |             leaderType  : Survey Manager
+       |           ]
+0004C1 |         }
+0004C2 |         <<DbRow>> {
+0004C3 |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 06
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 06
+       |             Unpacked Chars:  .
+       |           ]
+0004C8 |           StringNode::Command
+0004D1 |           StringNode::
+0004D2 |           StringNode::COO
+       |           VALUES:[
+       |             divisionID  : 6
+       |             divisionName: Command
+       |             description : 
+       |             leaderType  : COO
+       |           ]
+0004D6 |         }
+0004D7 |         <<DbRow>> {
+0004D8 |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 07
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 07
+       |             Unpacked Chars:  .
+       |           ]
+0004DD |           StringNode::Distribution
+0004EB |           StringNode::
+0004EC |           StringNode::Distribution Manager
+       |           VALUES:[
+       |             divisionID  : 7
+       |             divisionName: Distribution
+       |             description : 
+       |             leaderType  : Distribution Manager
+       |           ]
+000501 |         }
+000502 |         <<DbRow>> {
+000503 |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 08
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 08
+       |             Unpacked Chars:  .
+       |           ]
+000508 |           StringNode::Financial
+000513 |           StringNode::
+000514 |           StringNode::CFO
+       |           VALUES:[
+       |             divisionID  : 8
+       |             divisionName: Financial
+       |             description : 
+       |             leaderType  : CFO
+       |           ]
+000518 |         }
+000519 |         <<DbRow>> {
+00051A |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 09
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 09
+       |             Unpacked Chars:  .
+       |           ]
+00051F |           StringNode::Intelligence
+00052D |           StringNode::
+00052E |           StringNode::Chief Operative
+       |           VALUES:[
+       |             divisionID  : 9
+       |             divisionName: Intelligence
+       |             description : 
+       |             leaderType  : Chief Operative
+       |           ]
+00053E |         }
+00053F |         <<DbRow>> {
+000540 |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 0A
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 0A
+       |             Unpacked Chars:  .
+       |           ]
+000545 |           StringNode::Internal Security
+000558 |           StringNode::
+000559 |           StringNode::Commander
+       |           VALUES:[
+       |             divisionID  : 10
+       |             divisionName: Internal Security
+       |             description : 
+       |             leaderType  : Commander
+       |           ]
+000563 |         }
+000564 |         <<DbRow>> {
+000565 |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 0B
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 0B
+       |             Unpacked Chars:  .
+       |           ]
+00056A |           StringNode::Legal
+000571 |           StringNode::
+000572 |           StringNode::Principal Clerk
+       |           VALUES:[
+       |             divisionID  : 11
+       |             divisionName: Legal
+       |             description : 
+       |             leaderType  : Principal Clerk
+       |           ]
+000582 |         }
+000583 |         <<DbRow>> {
+000584 |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 0C
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 0C
+       |             Unpacked Chars:  .
+       |           ]
+000589 |           StringNode::Manufacturing
+000598 |           StringNode::
+000599 |           StringNode::Assembly Manager
+       |           VALUES:[
+       |             divisionID  : 12
+       |             divisionName: Manufacturing
+       |             description : 
+       |             leaderType  : Assembly Manager
+       |           ]
+0005AA |         }
+0005AB |         <<DbRow>> {
+0005AC |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 0D
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 0D
+       |             Unpacked Chars:  .
+       |           ]
+0005B1 |           StringNode::Marketing
+0005BC |           StringNode::
+0005BD |           StringNode::Market Manager
+       |           VALUES:[
+       |             divisionID  : 13
+       |             divisionName: Marketing
+       |             description : 
+       |             leaderType  : Market Manager
+       |           ]
+0005CC |         }
+0005CD |         <<DbRow>> {
+0005CE |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 0E
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 0E
+       |             Unpacked Chars:  .
+       |           ]
+0005D3 |           StringNode::Mining
+0005DB |           StringNode::
+0005DC |           StringNode::Mining Coordinator
+       |           VALUES:[
+       |             divisionID  : 14
+       |             divisionName: Mining
+       |             description : 
+       |             leaderType  : Mining Coordinator
+       |           ]
+0005EF |         }
+0005F0 |         <<DbRow>> {
+0005F1 |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 0F
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 0F
+       |             Unpacked Chars:  .
+       |           ]
+0005F6 |           StringNode::Personnel
+000601 |           StringNode::
+000602 |           StringNode::Chief of Staff
+       |           VALUES:[
+       |             divisionID  : 15
+       |             divisionName: Personnel
+       |             description : 
+       |             leaderType  : Chief of Staff
+       |           ]
+000611 |         }
+000612 |         <<DbRow>> {
+000613 |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 10
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 10
+       |             Unpacked Chars:  .
+       |           ]
+000618 |           StringNode::Production
+000624 |           StringNode::
+000625 |           StringNode::Production Manager
+       |           VALUES:[
+       |             divisionID  : 16
+       |             divisionName: Production
+       |             description : 
+       |             leaderType  : Production Manager
+       |           ]
+000638 |         }
+000639 |         <<DbRow>> {
+00063A |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 11
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 11
+       |             Unpacked Chars:  .
+       |           ]
+00063F |           StringNode::Public Relations
+000651 |           StringNode::
+000652 |           StringNode::Chief Coordinator
+       |           VALUES:[
+       |             divisionID  : 17
+       |             divisionName: Public Relations
+       |             description : 
+       |             leaderType  : Chief Coordinator
+       |           ]
+000664 |         }
+000665 |         <<DbRow>> {
+000666 |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 12
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 12
+       |             Unpacked Chars:  .
+       |           ]
+00066B |           StringNode::R&D
+000670 |           StringNode::
+000671 |           StringNode::Chief Researcher
+       |           VALUES:[
+       |             divisionID  : 18
+       |             divisionName: R&D
+       |             description : 
+       |             leaderType  : Chief Researcher
+       |           ]
+000682 |         }
+000683 |         <<DbRow>> {
+000684 |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 13
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 13
+       |             Unpacked Chars:  .
+       |           ]
+000689 |           StringNode::Security
+000693 |           StringNode::
+000694 |           StringNode::Commander
+       |           VALUES:[
+       |             divisionID  : 19
+       |             divisionName: Security
+       |             description : 
+       |             leaderType  : Commander
+       |           ]
+00069E |         }
+00069F |         <<DbRow>> {
+0006A0 |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 14
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 14
+       |             Unpacked Chars:  .
+       |           ]
+0006A5 |           StringNode::Storage
+0006AE |           StringNode::
+0006AF |           StringNode::Storage Facilitator
+       |           VALUES:[
+       |             divisionID  : 20
+       |             divisionName: Storage
+       |             description : 
+       |             leaderType  : Storage Facilitator
+       |           ]
+0006C3 |         }
+0006C4 |         <<DbRow>> {
+0006C5 |           ObjectRef::ref-to-id: 1 @0x0003D9
+       |           Payload:[
+       |             Packed Bytes  : 87 15
+       |             Packed Chars  :  .  .
+       |             Unpacked Bytes: 15
+       |             Unpacked Chars:  .
+       |           ]
+0006CA |           StringNode::Surveillance
+0006D8 |           StringNode::
+0006D9 |           StringNode::Chief Scout
+       |           VALUES:[
+       |             divisionID  : 21
+       |             divisionName: Surveillance
+       |             description : 
+       |             leaderType  : Chief Scout
+       |           ]
+0006E5 |         }
+0006E6 |         DbEndRecordMarker::EveCacheLib.StreamNodes.DbEndRecordMarker
+0006E7 |         DbEndRecordMarker::EveCacheLib.StreamNodes.DbEndRecordMarker
+0006E7 |       }
+0006E8 |       IdentString::lret
+0006EE |       ObjectRef::ref-to-id: 2 @0x0003A1
+0006F0 |       IdentString::version
+0006F9 |       BigInteger::-3282354542738224639
+000703 |       IdentString::runid
+000709 |     }
+000709 |   }
+000711 | }

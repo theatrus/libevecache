@@ -42,6 +42,7 @@ namespace EveCache {
         EIdent = 0x13, // an identifier string
         EString = 0x2, // Another type of string, also ids
         EString2 = 0x2e, // stringtastic
+        EString0 = 0xe, // a zero length string
         EString3 = 0xf, // really? another? single character string
         EString4 = 0x10,
         EUnicodeString = 0x12,
