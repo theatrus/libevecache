@@ -91,27 +91,27 @@ namespace EveCache {
     }
 
 
-  MarketParser::MarketParser(const SNode* stream) : _stream(stream), _valid(false)
+    MarketParser::MarketParser(const SNode* stream) : _stream(stream), _valid(false)
     {
 
     }
 
-  MarketParser::MarketParser(const char* fileName) : _valid(false)
+    MarketParser::MarketParser(const char* fileName) : _valid(false)
     {
-      try { 
-	initWithFile(std::string(fileName));
-      } catch (ParseException &e) {
-	return;
-      }
+        try {
+            initWithFile(std::string(fileName));
+        } catch (ParseException &e) {
+            return;
+        }
     }
 
-  MarketParser::MarketParser(const std::string fileName) : _valid(false)
+    MarketParser::MarketParser(const std::string fileName) : _valid(false)
     {
-      try{
-	initWithFile(fileName);
-      } catch (ParseException &e) { 
-	return;
-      }
+        try{
+            initWithFile(fileName);
+        } catch (ParseException &e) {
+            return;
+        }
     }
 
     MarketParser::~MarketParser()
@@ -132,13 +132,13 @@ namespace EveCache {
         parse();
         delete parser;
         _stream = NULL;
-	_valid = true;
+        _valid = true;
     }
-  
-  bool MarketParser::valid() const
-  {
-    return _valid;
-  }
+
+    bool MarketParser::valid() const
+    {
+        return _valid;
+    }
 
 
     void MarketParser::parseDbRow(const SNode* node)
@@ -229,7 +229,7 @@ namespace EveCache {
 
     void MarketParser::parse(const SNode* node)
     {
-      if (node->members().size() > 0) {
+        if (node->members().size() > 0) {
             std::vector<SNode*>::const_iterator i = node->members().begin();
             for (; i!= node->members().end(); ++i) {
                 SDBRow *dbrow = dynamic_cast<SDBRow*>(*i);
@@ -276,7 +276,7 @@ namespace EveCache {
         if (obj == NULL)
             return;
         parse(obj);
-	_valid = true;
+        _valid = true;
     }
 
     MarketList MarketParser::getList() const
