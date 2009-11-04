@@ -143,7 +143,9 @@ namespace EveCache {
         ~MarketParser();
         MarketList getList() const;
         void parse();
+	bool valid() const;
     private:
+	bool _valid;
         void initWithFile(const std::string& fileName);
         void parse(const SNode* nest);
         void parseDbRow(const SNode* nest);

@@ -91,19 +91,27 @@ namespace EveCache {
     }
 
 
-    MarketParser::MarketParser(const SNode* stream) : _stream(stream)
+  MarketParser::MarketParser(const SNode* stream) : _stream(stream), _valid(false)
     {
 
     }
 
-    MarketParser::MarketParser(const char* fileName)
+  MarketParser::MarketParser(const char* fileName) : _valid(false)
     {
-        initWithFile(std::string(fileName));
+      try { 
+	initWithFile(std::string(fileName));
+      } catch (ParseException &e) {
+	return;
+      }
     }
 
-    MarketParser::MarketParser(const std::string fileName)
+  MarketParser::MarketParser(const std::string fileName) : _valid(false)
     {
-        initWithFile(fileName);
+      try{
+	initWithFile(fileName);
+      } catch (ParseException &e) { 
+	return;
+      }
     }
 
     MarketParser::~MarketParser()
@@ -124,7 +132,14 @@ namespace EveCache {
         parse();
         delete parser;
         _stream = NULL;
+	_valid = true;
     }
+  
+  bool MarketParser::valid() const
+  {
+    return _valid;
+  }
+
 
     void MarketParser::parseDbRow(const SNode* node)
     {
@@ -261,6 +276,7 @@ namespace EveCache {
         if (obj == NULL)
             return;
         parse(obj);
+	_valid = true;
     }
 
     MarketList MarketParser::getList() const

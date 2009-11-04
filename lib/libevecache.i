@@ -356,9 +356,10 @@ namespace EveCache {
         ~MarketParser();
         MarketList getList() const;
         void parse();
+	bool valid() const;
         MarketParser(const char* fileName);
         MarketParser(const std::string fileName);
-
+	
     };
 
 
