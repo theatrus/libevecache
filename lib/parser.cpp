@@ -1092,8 +1092,9 @@ namespace EveCache {
                         delete body;
                         delete head;
                         delete dict;
-
-                        throw ParseException("unhandled ado type");
+                        std::stringstream ss;
+                        ss << "Unhandled ADO type " << fti;
+                        throw ParseException(ss.str());
                     }
                 }
                 if (obj) {
@@ -1168,8 +1169,17 @@ namespace EveCache {
 
     SNode* Parser::shareGet(unsigned int id)
     {
-        if (id > _sharecount)
-            throw ParseException("id out of range");
+        if (id > _sharecount) {
+            std::stringstream ss;
+            ss << "ShareID out of range " << id << " > " << _sharecount;
+            throw ParseException(ss.str());
+        }
+
+        if (_shareobj[id] == NULL) {
+            std::stringstream ss;
+            ss << "ShareTab: No entry at position " << id;
+            throw ParseException(ss.str());
+        }
 
         return _shareobj[id]->clone();
     }
