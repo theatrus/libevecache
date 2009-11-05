@@ -261,6 +261,8 @@ namespace EveCache {
             throw ParseException("Not a valid orders file");
 
         SIdent *id = dynamic_cast<SIdent*>(base->members()[0]->members()[1]);
+        if (id == NULL)
+            throw ParseException("Can't determine method name");
         if (id->name() != "GetOrders")
             throw ParseException("Not a valid orders file");
 
