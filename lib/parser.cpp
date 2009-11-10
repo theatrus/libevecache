@@ -262,6 +262,24 @@ namespace EveCache {
         return new SDict(*this);
     }
 
+    SNode* SDict::getByName(const std::string &target) const
+    {
+        if (_members.size() < 2 || _members.size() & 1)
+            return NULL;
+
+        /* Non idiomatic C++ coming, you've been warned */
+        /* Optimization improvement: replace this thing with a real map */
+
+        for (int i = 1; i < _members.size(); i += 2) {
+            SIdent *name = dynamic_cast<SIdent*>(_members[i]);
+            if (name != NULL) {
+                if (name->name() == target)
+                    return _members[i - 1];
+            }
+        }
+        return NULL;
+    }
+
 
 /***********************************************************************/
 

@@ -113,14 +113,17 @@ namespace EveCache {
             _region = rhs._region;
             _sellOrders = rhs._sellOrders;
             _buyOrders = rhs._buyOrders;
+            _ts = rhs._ts;
         }
 
 
         void setType(int v) { _type = v; }
         void setRegion(int r) { _region = r; }
+        void setTimestamp(unsigned long t) { _ts = t; }
 
         int type() const { return _type; }
         int region() const { return _region; }
+        unsigned long timestamp() const { return _ts; }
 
         std::vector<MarketOrder> getSellOrders() const { return _sellOrders; }
         std::vector<MarketOrder> getBuyOrders() const { return _buyOrders; }
@@ -130,6 +133,7 @@ namespace EveCache {
     private:
         int _type;
         int _region;
+        unsigned long _ts;
         std::vector<MarketOrder> _sellOrders;
         std::vector<MarketOrder> _buyOrders;
     };
@@ -143,9 +147,9 @@ namespace EveCache {
         ~MarketParser();
         MarketList getList() const;
         void parse();
-	bool valid() const;
+        bool valid() const;
     private:
-	bool _valid;
+        bool _valid;
         void initWithFile(const std::string& fileName);
         void parse(const SNode* nest);
         void parseDbRow(const SNode* nest);

@@ -78,7 +78,7 @@ namespace EveCache {
     {
     }
 
-    MarketList::MarketList() : _type(0), _region(0)
+    MarketList::MarketList() : _type(0), _region(0), _ts(0)
     {
     }
 
@@ -89,6 +89,12 @@ namespace EveCache {
         else
             _sellOrders.push_back(order);
     }
+
+    MarketList MarketParser::getList() const
+    {
+        return _list;
+    }
+
 
 
     MarketParser::MarketParser(const SNode* stream) : _stream(stream), _valid(false)
@@ -270,19 +276,28 @@ namespace EveCache {
 
         SInt *region = dynamic_cast<SInt*>(base->members()[0]->members()[2]);
         SInt *type = dynamic_cast<SInt*>(base->members()[0]->members()[3]);
+
         _list.setRegion(region->value());
         _list.setType(type->value());
 
+        /* Try to extract the in-file timestamp */
 
-        SNode *obj = dynamic_cast<SObject*>(base->members()[1]->members()[0]); // Should be an SObject
+        SDict *dict = dynamic_cast<SDict*>(base->members()[1]);
+        if (dict == NULL)
+            throw ParseException("Can't read file timestamp");
+
+        SLongLong *time = dynamic_cast<SLongLong*>(dict->getByName("runid"));
+        if (time == NULL)
+            throw ParseException("Can't read file timestamp");
+
+        std::cout << "TS: " << time->value() << std::endl;
+        _list.setTimestamp(windows_to_unix_time(time->value()));
+
+        SNode *obj = dynamic_cast<SObject*>(base->members()[1]->members()[0]);
         if (obj == NULL)
             return;
         parse(obj);
         _valid = true;
     }
 
-    MarketList MarketParser::getList() const
-    {
-        return _list;
-    }
 };

@@ -142,6 +142,7 @@ namespace EveCache {
         virtual void addMember(SNode* node);
         virtual std::string repl() const;
         virtual SDict* clone() const;
+        virtual SNode* getByName(const std::string& target) const;
     protected:
         unsigned int _givenLength;
     };

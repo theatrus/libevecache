@@ -26,6 +26,8 @@
 #include <iostream>
 #include <cstring>
 
+#include <time.h>
+
 // Yes I'm lazy
 using namespace EveCache;
 
@@ -69,11 +71,21 @@ void market(const SNode* node)
     try {
         mp.parse();
     } catch (ParseException &e) {
-        std::cerr << "Not a valid orders file" << std::endl;
+        std::cerr << "Not a valid orders file due to " << static_cast<std::string>(e) << std::endl;
         return;
     }
     MarketList list = mp.getList();
-    std::cerr << "MarketList for region " << list.region() << " and type " << list.type() << std::endl;
+
+    time_t t = list.timestamp();
+    struct tm* tmp = gmtime(&t);
+
+    char times[200];
+    strftime(times, 200, "%Y-%m-%d %H:%M:%S", tmp);
+
+    std::cerr << "MarketList for region " << list.region() <<
+        " and type " << list.type() <<
+        " at time " << times << " " << list.timestamp() << std::endl;
+
     std::cout << "price,volRemaining,typeID,range,orderID,volEntered,minVolume,bid,issued,duration,stationID,regionID,solarSystemID,jumps," << std::endl;
     std::vector<MarketOrder> buy = list.getBuyOrders();
     std::vector<MarketOrder> sell = list.getSellOrders();

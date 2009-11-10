@@ -19,8 +19,8 @@ if platform.name == "win32":
    pyenv.Append(CPPDEFINES=["WIN32"])
    pyenv.Append(LIBPATH=['c:/python26/libs/'])
 else:
-   lenv.Append(CPPFLAGS=["-g3"])
-   env.Append(CPPFLAGS=["-g3"])
+   lenv.Append(CPPFLAGS=["-g3", "-Wall"])
+   env.Append(CPPFLAGS=["-g3", "-Wall"])
 
 lib = lenv.SharedLibrary('evecache', Glob('lib/*cpp'))
 
