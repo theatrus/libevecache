@@ -286,7 +286,8 @@ namespace EveCache {
         if (dict == NULL)
             throw ParseException("Can't read file timestamp");
 
-        SLongLong *time = dynamic_cast<SLongLong*>(dict->getByName("runid"));
+        // Grab the version entry of the version tuple
+        SLongLong *time = dynamic_cast<SLongLong*>(dict->getByName("version")->members()[0]);
         if (time == NULL)
             throw ParseException("Can't read file timestamp");
 
