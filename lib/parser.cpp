@@ -1053,47 +1053,59 @@ namespace EveCache {
                 unsigned char boolbuf=0;
                 SNode *obj=NULL;
                 switch(fti) {
-                    case 20: if (step == 1) // 64bit int
+                case 21:
+                case 20: if (step == 1) // 64bit int
                     {
                         long long val = blob.readLongLong();
                         obj = new SLongLong(val);
                     }
                     break;
-                    case 6: if (step == 1) // currency
+                case 6: if (step == 1) // currency
                     {
                         long long val = blob.readLongLong();
                         obj = new SLongLong(val);
                     }
                     break;
-                    case 64: if (step == 1) // timestamp
+                case 64: if (step == 1) // timestamp
                     {
                         long long val = blob.readLongLong();
                         obj = new SLongLong(val);
                     }
                     break;
-                    case 5: if (step == 1) // double
+                case 5: if (step == 1) // double
                     {
                         double val = blob.readDouble();
                         obj = new SReal(val);
                     }
                     break;
-
-                    case 3: if (step == 2) // 32bit int
+                case 4:
+                {
+                    double val = blob.readFloat();
+                    obj = new SReal(val);
+                }
+                break;
+                case 19:
+                case 3: if (step == 2) // 32bit int
                     {
                         int val = blob.readInt();
                         obj = new SInt(val);
                     }
                     break;
-
-                    case 2: if (step == 3) // 16bit int
+                case 18:
+                case 2: if (step == 3) // 16bit int
                     {
                         int val = blob.readShort();
                         obj = new SInt(val);
                     }
                     break;
-
-
-                    case 11: if (step == 5) // boolean
+                case 17:
+                case 16: 
+                {
+                    int val = blob.readChar();
+                    obj = new SInt(val);
+                }
+                break;
+                case 11: if (step == 5) // boolean
                     {
                         if (!boolcount) {
                             boolbuf = blob.readChar();
@@ -1108,18 +1120,25 @@ namespace EveCache {
                         boolcount <<= 1;
                     }
                     break;
-                    default:
-                    {
-                        if (obj != NULL)
-                            delete obj;
-                        delete fn;
-                        delete body;
-                        delete head;
-                        delete dict;
-                        std::stringstream ss;
-                        ss << "Unhandled ADO type " << fti;
-                        throw ParseException(ss.str());
-                    }
+                case 129: // String types
+                case 128:
+                case 130:
+                {
+                    obj = new SString("I can't parse strings yet - be patient");
+                }
+                break;
+                default:
+                {
+                    if (obj != NULL)
+                        delete obj;
+                    delete fn;
+                    delete body;
+                    delete head;
+                    delete dict;
+                    std::stringstream ss;
+                    ss << "Unhandled ADO type " << fti;
+                    throw ParseException(ss.str());
+                }
                 }
                 if (obj) {
                     dict->addMember(obj);
