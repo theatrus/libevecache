@@ -1,5 +1,5 @@
 // libevecache - EVE Cache File Reader Library
-// Copyright (C) 2009  StackFoundry LLC and Yann Ramin
+// Copyright (C) 2009-2010  StackFoundry LLC and Yann Ramin
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
