@@ -303,8 +303,9 @@ namespace EveCache {
         CacheFile_Iterator *_iter;
         unsigned int _sharecount;   // number of shared obj
         unsigned int _sharecursor;  // current index into
-        unsigned int *_sharemap;    // list of slot mappings
         SNode **_shareobj;          // list of already discovered shareds
+        unsigned int *_sharemap;    // list of slot mappings
+
     };
 
 

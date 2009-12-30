@@ -149,12 +149,13 @@ namespace EveCache {
         void parse();
         bool valid() const;
     private:
+        const SNode *_stream;
         bool _valid;
         void initWithFile(const std::string& fileName);
         void parse(const SNode* nest);
         void parseDbRow(const SNode* nest);
         MarketList _list;
-        const SNode *_stream;
+
     };
 
 

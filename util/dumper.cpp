@@ -154,13 +154,13 @@ int main(int argc, char** argv)
 
             if (dumpStructure) {
                 // TODO; more than one stream
-                for (int i = 0; i < parser->streams().size(); i++) {
+                for (unsigned int i = 0; i < parser->streams().size(); i++) {
                     const std::vector<SNode*>& streams = parser->streams()[i]->members();
                     dump(streams, 0);
                 }
             }
             if (dumpMarket) {
-                for (int i = 0; i < parser->streams().size(); i++) {
+                for (unsigned int i = 0; i < parser->streams().size(); i++) {
                     const SNode* snode = parser->streams()[i];
                     market(snode);
                 }

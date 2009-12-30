@@ -270,7 +270,7 @@ namespace EveCache {
         /* Non idiomatic C++ coming, you've been warned */
         /* Optimization improvement: replace this thing with a real map */
 
-        for (int i = 1; i < _members.size(); i += 2) {
+        for (unsigned int i = 1; i < _members.size(); i += 2) {
             SIdent *name = dynamic_cast<SIdent*>(_members[i]);
             if (name != NULL) {
                 if (name->name() == target)
@@ -582,7 +582,7 @@ namespace EveCache {
         }
 
         if (_shareobj != NULL)
-            for (int j = 0; j <= _sharecount; j++) {
+            for (unsigned int j = 0; j <= _sharecount; j++) {
                 if (_shareobj[j] != NULL)
                     delete _shareobj[j];
             }
@@ -707,7 +707,7 @@ namespace EveCache {
             thisobj = new SString(data);
         }
         break;
-        case EString0:
+        case E0String:
         {
             std::string data;
             thisobj = new SString(data);
@@ -851,7 +851,7 @@ namespace EveCache {
             if (! oclass.compare("dbutil.RowList")) {
                 try {
                     SNode *row;
-                    while (row = parseone()) {
+                    while ( (row = parseone()) ) {
                         obj->addMember(row);
                     }
                 } catch (ParseException &e) {
@@ -877,7 +877,7 @@ namespace EveCache {
             try {
                 Parser sp(&iter_sub);
                 sp.parse();
-                for (int i = 0; i < sp.streams().size(); i++) {
+                for (unsigned int i = 0; i < sp.streams().size(); i++) {
                     ss->addMember(sp.streams()[i]->clone());
                 }
             } catch (ParseException &e) {
@@ -962,7 +962,6 @@ namespace EveCache {
 
     void Parser::parse(SNode* stream, int limit)
     {
-        SDBRow *lastDbRow = NULL;
         while (!_iter->atEnd() && limit != 0)
         {
             SNode *thisobj = parseone();
