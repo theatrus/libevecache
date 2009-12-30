@@ -123,6 +123,7 @@ namespace EveCache {
         virtual void addMember(SNode* node);
         virtual std::string repl() const;
         virtual SDict* clone() const;
+        virtual SNode* getByName(const std::string& target) const;
     protected:
         unsigned int _givenLength;
     };
@@ -338,9 +339,11 @@ namespace EveCache {
 
         void setType(int v) { _type = v; }
         void setRegion(int r) { _region = r; }
+        void setTimestamp(unsigned long t) { _ts = t; }
 
         int type() const { return _type; }
         int region() const { return _region; }
+        unsigned long timestamp() const { return _ts; }
 
         std::vector<MarketOrder> getSellOrders() const { return _sellOrders; }
         std::vector<MarketOrder> getBuyOrders() const { return _buyOrders; }
@@ -356,6 +359,7 @@ namespace EveCache {
         ~MarketParser();
         MarketList getList() const;
         void parse();
+        bool valid() const;
         MarketParser(const char* fileName);
         MarketParser(const std::string fileName);
 

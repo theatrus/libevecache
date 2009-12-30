@@ -78,7 +78,7 @@ namespace EveCache {
     {
     }
 
-    MarketList::MarketList() : _type(0), _region(0)
+    MarketList::MarketList() : _type(0), _region(0), _ts(0)
     {
     }
 
@@ -90,20 +90,34 @@ namespace EveCache {
             _sellOrders.push_back(order);
     }
 
+    MarketList MarketParser::getList() const
+    {
+        return _list;
+    }
 
-    MarketParser::MarketParser(const SNode* stream) : _stream(stream)
+
+
+    MarketParser::MarketParser(const SNode* stream) : _stream(stream), _valid(false)
     {
 
     }
 
-    MarketParser::MarketParser(const char* fileName)
+    MarketParser::MarketParser(const char* fileName) : _valid(false)
     {
-        initWithFile(std::string(fileName));
+        try {
+            initWithFile(std::string(fileName));
+        } catch (ParseException &e) {
+            return;
+        }
     }
 
-    MarketParser::MarketParser(const std::string fileName)
+    MarketParser::MarketParser(const std::string fileName) : _valid(false)
     {
-        initWithFile(fileName);
+        try{
+            initWithFile(fileName);
+        } catch (ParseException &e) {
+            return;
+        }
     }
 
     MarketParser::~MarketParser()
@@ -124,7 +138,14 @@ namespace EveCache {
         parse();
         delete parser;
         _stream = NULL;
+        _valid = true;
     }
+
+    bool MarketParser::valid() const
+    {
+        return _valid;
+    }
+
 
     void MarketParser::parseDbRow(const SNode* node)
     {
@@ -214,7 +235,7 @@ namespace EveCache {
 
     void MarketParser::parse(const SNode* node)
     {
-      if (node->members().size() > 0) {
+        if (node->members().size() > 0) {
             std::vector<SNode*>::const_iterator i = node->members().begin();
             for (; i!= node->members().end(); ++i) {
                 SDBRow *dbrow = dynamic_cast<SDBRow*>(*i);
@@ -233,6 +254,7 @@ namespace EveCache {
         if (_stream == NULL)
             return;
 
+        /* Todo: fixed offsets = bad :) */
         /* Step 1: Determine if this is a market order file */
         if (_stream->members().size() < 1)
             throw ParseException("Not a valid file");
@@ -245,19 +267,38 @@ namespace EveCache {
             throw ParseException("Not a valid orders file");
 
         SIdent *id = dynamic_cast<SIdent*>(base->members()[0]->members()[1]);
+        if (id == NULL)
+            throw ParseException("Can't determine method name");
         if (id->name() != "GetOrders")
             throw ParseException("Not a valid orders file");
 
-        /* Todo: fixed offsets = bad :) */
+        /* Retrieve the region and type */
 
-        SNode *obj = dynamic_cast<SObject*>(base->members()[1]->members()[0]); // Should be an SObject
+        SInt *region = dynamic_cast<SInt*>(base->members()[0]->members()[2]);
+        SInt *type = dynamic_cast<SInt*>(base->members()[0]->members()[3]);
+
+        _list.setRegion(region->value());
+        _list.setType(type->value());
+
+        /* Try to extract the in-file timestamp */
+
+        SDict *dict = dynamic_cast<SDict*>(base->members()[1]);
+        if (dict == NULL)
+            throw ParseException("Can't read file timestamp");
+
+        // Grab the version entry of the version tuple
+        SLongLong *time = dynamic_cast<SLongLong*>(dict->getByName("version")->members()[0]);
+        if (time == NULL)
+            throw ParseException("Can't read file timestamp");
+
+        std::cout << "TS: " << time->value() << std::endl;
+        _list.setTimestamp(windows_to_unix_time(time->value()));
+
+        SNode *obj = dynamic_cast<SObject*>(base->members()[1]->members()[0]);
         if (obj == NULL)
-            throw ParseException("Can't find the SObject");
+            return;
         parse(obj);
+        _valid = true;
     }
 
-    MarketList MarketParser::getList() const
-    {
-        return _list;
-    }
 };

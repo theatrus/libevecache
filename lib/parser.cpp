@@ -262,6 +262,24 @@ namespace EveCache {
         return new SDict(*this);
     }
 
+    SNode* SDict::getByName(const std::string &target) const
+    {
+        if (_members.size() < 2 || _members.size() & 1)
+            return NULL;
+
+        /* Non idiomatic C++ coming, you've been warned */
+        /* Optimization improvement: replace this thing with a real map */
+
+        for (int i = 1; i < _members.size(); i += 2) {
+            SIdent *name = dynamic_cast<SIdent*>(_members[i]);
+            if (name != NULL) {
+                if (name->name() == target)
+                    return _members[i - 1];
+            }
+        }
+        return NULL;
+    }
+
 
 /***********************************************************************/
 
@@ -671,7 +689,6 @@ namespace EveCache {
             thisobj = new SIdent(data);
         }
         break;
-        case E0String:
         case EEmptyString:
         {
             thisobj = new SString("");
@@ -690,6 +707,12 @@ namespace EveCache {
             thisobj = new SString(data);
         }
         break;
+        case EString0:
+        {
+            std::string data;
+            thisobj = new SString(data);
+        }
+        break;
         case EUnicodeString:
         case EString4:
         case EString2:
@@ -699,6 +722,13 @@ namespace EveCache {
             std::string data = _iter->readString(len);
             thisobj = new SString(data);
 
+//            if (len == 0 && (_iter->limit() - _iter->position()) <= 0xf) {
+                // HACK HACK HACK - 0 length string is probably the end of this substream
+                // lets just give up now
+//                while(!_iter->atEnd())
+//                   _iter->readChar();
+//                return;
+//            }
         }
         break;
         case EDict:
@@ -880,13 +910,6 @@ namespace EveCache {
             thisobj = shareGet(id);
         }
         break;
-        case EChecksum:
-        {
-
-            thisobj = new SString("checksum");
-            _iter->readInt();
-        }
-        break;
         case 0x2d:
         {
             if(_iter->readChar() != 0x2d) {
@@ -901,9 +924,15 @@ namespace EveCache {
         break;
         case 0:
             break;
-
         default:
         {
+//            if (_iter->limit() == 0xa && check == 0x0)
+//            {
+//                while(!_iter->atEnd())
+//                    _iter->readChar();
+                // HACK HACK - valid end of file, in bizarro CCP land?
+//                return;
+//            }
             std::stringstream msg;
             msg << "Can't identify type 0x" << std::hex << static_cast<unsigned int>(check)
                 << " at position 0x" << _iter->position() << " limit " << _iter->limit();
@@ -1018,39 +1047,39 @@ namespace EveCache {
                 unsigned char boolbuf=0;
                 SNode *obj=NULL;
                 switch(fti) {
-                case 20: if (step == 1) // 64bit int
+                    case 20: if (step == 1) // 64bit int
                     {
                         long long val = blob.readLongLong();
                         obj = new SLongLong(val);
                     }
                     break;
-                case 6: if (step == 1) // currency
+                    case 6: if (step == 1) // currency
                     {
                         long long val = blob.readLongLong();
                         obj = new SLongLong(val);
                     }
                     break;
-                case 64: if (step == 1) // timestamp
+                    case 64: if (step == 1) // timestamp
                     {
                         long long val = blob.readLongLong();
                         obj = new SLongLong(val);
                     }
                     break;
-                case 5: if (step == 1) // double
+                    case 5: if (step == 1) // double
                     {
                         double val = blob.readDouble();
                         obj = new SReal(val);
                     }
                     break;
 
-                case 3: if (step == 2) // 32bit int
+                    case 3: if (step == 2) // 32bit int
                     {
                         int val = blob.readInt();
                         obj = new SInt(val);
                     }
                     break;
 
-                case 2: if (step == 3) // 16bit int
+                    case 2: if (step == 3) // 16bit int
                     {
                         int val = blob.readShort();
                         obj = new SInt(val);
@@ -1058,7 +1087,7 @@ namespace EveCache {
                     break;
 
 
-                case 11: if (step == 5) // boolean
+                    case 11: if (step == 5) // boolean
                     {
                         if (!boolcount) {
                             boolbuf = blob.readChar();
@@ -1073,17 +1102,18 @@ namespace EveCache {
                         boolcount <<= 1;
                     }
                     break;
-                default:
-                {
-                    if (obj != NULL)
-                        delete obj;
-                    delete fn;
-                    delete body;
-                    delete head;
-                    delete dict;
-
-                    throw ParseException("unhandled ado type");
-                }
+                    default:
+                    {
+                        if (obj != NULL)
+                            delete obj;
+                        delete fn;
+                        delete body;
+                        delete head;
+                        delete dict;
+                        std::stringstream ss;
+                        ss << "Unhandled ADO type " << fti;
+                        throw ParseException(ss.str());
+                    }
                 }
                 if (obj) {
                     dict->addMember(obj);
@@ -1157,8 +1187,17 @@ namespace EveCache {
 
     SNode* Parser::shareGet(unsigned int id)
     {
-        if (id > _sharecount)
-            throw ParseException("id out of range");
+        if (id > _sharecount) {
+            std::stringstream ss;
+            ss << "ShareID out of range " << id << " > " << _sharecount;
+            throw ParseException(ss.str());
+        }
+
+        if (_shareobj[id] == NULL) {
+            std::stringstream ss;
+            ss << "ShareTab: No entry at position " << id;
+            throw ParseException(ss.str());
+        }
 
         return _shareobj[id]->clone();
     }
