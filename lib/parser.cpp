@@ -910,6 +910,13 @@ namespace EveCache {
             thisobj = shareGet(id);
         }
         break;
+        case EChecksum:
+        {
+
+            thisobj = new SString("checksum");
+            _iter->readInt();
+        }
+        break;
         case 0x2d:
         {
             if(_iter->readChar() != 0x2d) {
