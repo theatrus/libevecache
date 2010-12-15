@@ -9,6 +9,7 @@ env = Environment(CPPPATH = ['lib/'])
 pyenv = Environment( SWIGFLAGS=['-c++', '-python', '-classic'], CPPPATH = ['lib/', distutils.sysconfig.get_python_inc()], SHLIBPREFIX="")
 platform = ARGUMENTS.get('OS', Platform())
 
+
 if platform.name == "win32":
    lenv.Append(CPPFLAGS=["/EHsc", "/MD", "/O2", "/GF", "/GL", "/GR", "/arch:SSE"])
    pyenv.Append(CPPFLAGS=["/EHsc", "/MD", "/O2", "/GF", "/GL", "/GR", "/arch:SSE"])
@@ -20,7 +21,6 @@ if platform.name == "win32":
 else:
    lenv.Append(CPPFLAGS=["-g3", "-Wall"])
    env.Append(CPPFLAGS=["-g3", "-Wall"])
-   pyenv.Append(CPPFLAGS='`python-config --includes`', LINKFLAGS='`python-config --ldflags`')
 
 lib = lenv.SharedLibrary('evecache', Glob('lib/*cpp'))
 
@@ -28,7 +28,7 @@ lib = lenv.SharedLibrary('evecache', Glob('lib/*cpp'))
 if platform.name == "win32":
    pyext = pyenv.SharedLibrary('_evecache', ['lib/libevecache_wrap.cxx'], LIBS='evecache')
 else:
-   pyext = pyenv.SharedLibrary('_evecache', ['lib/libevecache.i'], LIBS=lib)
+   pyext = pyenv.SharedLibrary('_evecache', ['lib/libevecache.i'], LIBS=[lib, 'python'])
 
 if platform.name == "win32":
    env.Program('util/dumper.cpp', LIBS='evecache') # try to link with .lib, not .dll
