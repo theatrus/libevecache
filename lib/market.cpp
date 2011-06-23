@@ -206,7 +206,7 @@ namespace EveCache {
                 order.setIssued(slongV);
                 break;
             case 138:
-                order.setOrderID(sintV);
+                order.setOrderID(slongV);
                 break;
             case 160:
                 order.setVolEntered(sintV);
