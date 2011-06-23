@@ -160,6 +160,22 @@ namespace EveCache {
             SNode* value = *i;
             ++i;
             SMarker* key = dynamic_cast<SMarker*>(*i);
+			SIdent* ident = dynamic_cast<SIdent*>(*i);
+
+			int typeKey = -1;
+
+			if (key != 0) {
+				typeKey = key->id();
+			} else {
+				if (ident->name() == "issueDate") {
+					typeKey = 131;
+				} else {
+					std::cerr << "Can't parse - giving up" << std::endl;
+					break;
+				}
+			}
+
+
 
             SInt* intV = dynamic_cast<SInt*>(value);
             SLongLong* longV = dynamic_cast<SLongLong*>(value);
@@ -178,7 +194,8 @@ namespace EveCache {
             if (realV != NULL)
                 srealV = realV->value();
 
-            switch(key->id()) {
+
+            switch(typeKey) {
             case 139:
                 order.setPrice(slongV);
                 break;
@@ -226,6 +243,10 @@ namespace EveCache {
                 else
                     order.setBid(false);
                 break;
+			default:
+				std::cout << "Unknown key ID:" << (int)key->id() <<  " r: " << srealV << " l: " << slongV << " i: " << sintV << std::endl;
+				break;
+
             }
         }
         _list.addOrder(order);

@@ -38,7 +38,8 @@ namespace EveCache {
     class EVECACHE_API MarketOrder {
     public:
 
-        MarketOrder() {}
+        MarketOrder() : _price(0), _volRemaining(0), _range(0), _orderID(0), _volEntered(0), _minVolume(0), _bid(0), _issued(0), 
+			_duration(0), _stationID(0), _regionID(0), _solarSystemID(0), _jumps(0), _type(0) {}
 
         /**
          * Utility
