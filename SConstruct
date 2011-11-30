@@ -4,20 +4,21 @@ import os
 import re
 import sys
 
-lenv = Environment(CPPPATH = ['lib/'])
-env = Environment(CPPPATH = ['lib/'])
-pyenv = Environment( SWIGFLAGS=['-c++', '-python', '-classic'], CPPPATH = ['lib/', distutils.sysconfig.get_python_inc()], SHLIBPREFIX="")
+lenv = Environment(TARGET_ARCH="x86", CPPPATH = ['lib/'])
+env = Environment(TARGET_ARCH="x86", CPPPATH = ['lib/'])
+pyenv = Environment(TARGET_ARCH="x86", SWIGFLAGS=['-c++', '-python', '-classic'], CPPPATH = ['lib/', distutils.sysconfig.get_python_inc()], SHLIBPREFIX="")
 platform = ARGUMENTS.get('OS', Platform())
 
 
 if platform.name == "win32":
-   lenv.Append(CPPFLAGS=["/EHsc", "/MD", "/O2", "/GF", "/GL", "/GR", "/arch:SSE"])
-   pyenv.Append(CPPFLAGS=["/EHsc", "/MD", "/O2", "/GF", "/GL", "/GR", "/arch:SSE"])
-   env.Append(CPPFLAGS=["/EHsc", "/MD", "/O2", "/GF", "/GL", "/GR", "/arch:SSE"])
+   lenv.Append(CPPFLAGS=["/EHsc", "/MD", "/O2", "/GF", "/GR"])
+   pyenv.Append(CPPFLAGS=["/EHsc", "/MD", "/O2", "/GF", "/GR"])
+   env.Append(CPPFLAGS=["/EHsc", "/MD", "/O2", "/GF", "/GR"])
    lenv.Append(CPPDEFINES=["EVECACHE_EXPORT", "WIN32"])
    env.Append(CPPDEFINES=["WIN32"])
-   pyenv.Append(CPPDEFINES=["WIN32"])
-   pyenv.Append(LIBPATH=['c:/python26/libs/'])
+   pyenv.Append(CPPDEFINES=["WIN32", "__WIN32__"])
+   pyenv.Append(LIBPATH=['c:/python27/libs/'])
+
 else:
    lenv.Append(CPPFLAGS=["-g3", "-Wall"])
    env.Append(CPPFLAGS=["-g3", "-Wall"])
@@ -26,7 +27,7 @@ lib = lenv.SharedLibrary('evecache', Glob('lib/*cpp'))
 
 # SCONS whacky issue with Windows. I sometimes really dislike scons...
 if platform.name == "win32":
-   pyext = pyenv.SharedLibrary('_evecache', ['lib/libevecache_wrap.cxx'], LIBS='evecache')
+   pyext = pyenv.SharedLibrary('_evecache', ['lib/libevecache_wrap.cxx'], LIBS=['evecache', 'python27'])
 else:
    pyext = pyenv.SharedLibrary('_evecache', ['lib/libevecache.i'], LIBS=[lib, 'python'])
 
