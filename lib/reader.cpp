@@ -37,7 +37,7 @@ namespace EveCache {
 
     CacheFile::CacheFile(std::vector<unsigned char> &buf)
     {
-        length = buf.size()+16; // TODO: unugly padding
+        length = (int)buf.size()+16; // TODO: unugly padding
         contents = new unsigned char[length];
         unsigned char *cur = contents;
         std::vector<unsigned char>::iterator i = buf.begin();
@@ -75,7 +75,7 @@ namespace EveCache {
         {
             ifstream::pos_type size;
             size = file.tellg();
-            contents = new unsigned char [size];
+            contents = new unsigned char [(int)size];
             file.seekg(0, ios::beg);
             file.read(reinterpret_cast<char*>(contents), size);
             file.close();
