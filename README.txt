@@ -55,3 +55,11 @@ E-mail  : atrus at stackworks.net
 IRC     : #evecentral on irc.freenode.org or #eve-dev on irc.coldfont.net
 Code    : http://gitorious.org/libevecache
 Web     : http://dev.eve-central.com/libevecache/
+
+
+Other Ports
+===========
+
+libevecache has been ported to other languages and platforms.
+
+.NET/CLR: https://github.com/jwatkins42/EveCache.Net
