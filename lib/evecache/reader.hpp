@@ -31,7 +31,12 @@ namespace EveCache {
 
     class EVECACHE_API CacheFile {
     public:
+
+		#ifdef WIN32
+        CacheFile(const std::wstring &filename);
+		#else
         CacheFile(const std::string &filename);
+		#endif
         CacheFile(const CacheFile&);
         CacheFile(std::vector<unsigned char> &buf);
         ~CacheFile();
@@ -48,6 +53,7 @@ namespace EveCache {
         int length;
         bool valid;
         std::string filename;
+		std::wstring wfilename;
     };
 
     class EVECACHE_API CacheFile_Iterator { // This does not adhere to the iterator protocol, yet

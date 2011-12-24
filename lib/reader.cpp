@@ -29,11 +29,22 @@
 
 namespace EveCache {
 
+
+#ifdef WIN32
+    CacheFile::CacheFile(const std::wstring &filename)  : contents(0), length(0), valid(false),
+                                                         wfilename(filename)
+    {
+
+    }
+
+#else
     CacheFile::CacheFile(const std::string &filename)  : contents(0), length(0), valid(false),
                                                          filename(filename)
     {
 
     }
+
+#endif
 
     CacheFile::CacheFile(std::vector<unsigned char> &buf)
     {
@@ -55,7 +66,7 @@ namespace EveCache {
     }
 
     CacheFile::CacheFile(const CacheFile&rhs) : length(rhs.length), valid(rhs.valid),
-                                          filename(rhs.filename)
+												filename(rhs.filename), wfilename(rhs.wfilename)
     {
         contents = new unsigned char[length];
         memcpy(contents, rhs.contents, length);
@@ -70,6 +81,9 @@ namespace EveCache {
     bool CacheFile::readFile()
     {
         using namespace std;
+		#ifdef WIN32
+        ifstream file(wfilename, ios::in | ios::binary | ios::ate);
+		#endif
         ifstream file(filename.c_str(), ios::in | ios::binary | ios::ate);
         if (file.is_open())
         {
