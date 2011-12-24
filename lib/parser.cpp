@@ -679,7 +679,7 @@ namespace EveCache {
             else if (len == 2)
                 thisobj = new SInt(_iter->readShort()); // not observed
             else if (len == 3)
-                thisobj = new SInt((_iter->readChar()) + (_iter->readChar() << 16));
+                thisobj = new SInt((_iter->readChar()) + (_iter->readChar() << 16) + (_iter->readChar() << 24));
         }
         break;
         case EIdent:
