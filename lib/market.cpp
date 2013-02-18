@@ -111,7 +111,7 @@ namespace EveCache {
         }
     }
 
-    MarketParser::MarketParser(const std::string fileName) : _valid(false)
+    MarketParser::MarketParser(const std::string& fileName) : _valid(false)
     {
         try{
             initWithFile(fileName);
@@ -126,7 +126,13 @@ namespace EveCache {
 
     void MarketParser::initWithFile(const std::string& fileName)
     {
+		#ifdef WIN32
+		std::wstring wFileName;
+		wFileName.assign(fileName.begin(), fileName.end());
+		CacheFile cF(wFileName);
+		#else
         CacheFile cF(fileName);
+		#endif
         if (cF.readFile() == false) {
             throw new ParseException("Can't open file" + fileName);
         }

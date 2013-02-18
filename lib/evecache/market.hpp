@@ -144,7 +144,7 @@ namespace EveCache {
     public:
         MarketParser(const SNode *stream);
         MarketParser(const char* fileName);
-        MarketParser(const std::string fileName);
+        MarketParser(const std::string& fileName);
         ~MarketParser();
         MarketList getList() const;
         void parse();

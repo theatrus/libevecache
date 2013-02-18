@@ -1,7 +1,7 @@
 #ifndef _EC_CONFIG_H_
 #define _EC_CONFIG_H_
 
-#ifdef WIN32
+#if defined(WIN32) && defined(EVECACHE_DLL)
 
 #if defined(EVECACHE_EXPORT) // inside DLL
 #   define EVECACHE_API   __declspec(dllexport)

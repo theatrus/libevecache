@@ -83,8 +83,9 @@ namespace EveCache {
         using namespace std;
 		#ifdef WIN32
         ifstream file(wfilename, ios::in | ios::binary | ios::ate);
-		#endif
+		#else
         ifstream file(filename.c_str(), ios::in | ios::binary | ios::ate);
+		#endif
         if (file.is_open())
         {
             ifstream::pos_type size;
