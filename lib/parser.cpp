@@ -848,7 +848,8 @@ namespace EveCache {
 //
 // f.ex. dbutil.RowList -> keep reading rows until you hit the 0x2d marker
 //
-            if (! oclass.compare("dbutil.RowList")) {
+            if (! oclass.compare("dbutil.RowList") ||
+                ! oclass.compare("eve.common.script.sys.rowset.RowList")) {
                 try {
                     SNode *row;
                     while ( (row = parseone()) ) {
