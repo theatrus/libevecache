@@ -28,6 +28,11 @@
 
 #include <time.h>
 
+#ifdef WIN32
+#include <windows.h>
+#include <stdlib.h>
+#endif
+
 // Yes I'm lazy
 using namespace EveCache;
 
@@ -135,11 +140,17 @@ int main(int argc, char** argv)
     for (int filen = argsconsumed; filen <= argc - 1; filen++)
     {
         {
+#ifdef WIN32
+            wchar_t f[MAX_PATH];
+            mbstowcs(f, argv[filen], MAX_PATH);
+            std::wstring fileName(f);
+#else
             std::string fileName(argv[filen]);
+#endif
             CacheFile cF(fileName);
             if (cF.readFile() == false) {
                 // Not a valid file, skip
-                std::cerr << "Can't open " << fileName << std::endl;
+                std::cerr << "Can't open " << argv[filen] << std::endl;
                 continue;
             }
 

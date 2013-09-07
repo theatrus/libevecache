@@ -26,6 +26,11 @@
 #include <cstring>
 #include <assert.h>
 #include <vector>
+#include <stdlib.h>
+
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 namespace EveCache {
 
@@ -82,7 +87,9 @@ namespace EveCache {
     {
         using namespace std;
 		#ifdef WIN32
-        ifstream file(wfilename, ios::in | ios::binary | ios::ate);
+        char f[MAX_PATH];
+        wcstombs(f, wfilename.c_str(), MAX_PATH);
+        ifstream file(f, ios::in | ios::binary | ios::ate);
 		#else
         ifstream file(filename.c_str(), ios::in | ios::binary | ios::ate);
 		#endif

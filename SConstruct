@@ -14,9 +14,9 @@ if platform.name == "win32":
    lenv.Append(CPPFLAGS=["/EHsc", "/MD", "/O2", "/GF", "/GR"])
    pyenv.Append(CPPFLAGS=["/EHsc", "/MD", "/O2", "/GF", "/GR"])
    env.Append(CPPFLAGS=["/EHsc", "/MD", "/O2", "/GF", "/GR"])
-   lenv.Append(CPPDEFINES=["EVECACHE_EXPORT", "WIN32"])
-   env.Append(CPPDEFINES=["WIN32"])
-   pyenv.Append(CPPDEFINES=["WIN32", "__WIN32__"])
+   lenv.Append(CPPDEFINES=["EVECACHE_DLL", "EVECACHE_EXPORT", "WIN32"])
+   env.Append(CPPDEFINES=["EVECACHE_DLL", "EVECACHE_EXPORT", "WIN32"])
+   pyenv.Append(CPPDEFINES=["EVECACHE_DLL", "EVECACHE_EXPORT", "WIN32", "__WIN32__"])
    pyenv.Append(LIBPATH=['c:/python27/libs/'])
 
 else:
@@ -26,9 +26,7 @@ else:
 lib = lenv.SharedLibrary('evecache', Glob('lib/*cpp'))
 
 # SCONS whacky issue with Windows. I sometimes really dislike scons...
-if platform.name == "win32":
-   pyext = pyenv.SharedLibrary('_evecache', ['lib/libevecache_wrap.cxx'], LIBS=['evecache', 'python27'])
-else:
+if platform.name != "win32":
    pyext = pyenv.SharedLibrary('_evecache', ['lib/libevecache.i'], LIBS=[lib, 'python'])
 
 if platform.name == "win32":
